@@ -1,0 +1,56 @@
+```{python}
+#| label: ErrorsSVK
+#| fig-cap: "Relative error with regards to FEniCS (SVK)"
+
+import plotly.graph_objects as go
+import pandas as pd
+
+# Relative nodal L2 errors against FEniCS SVK at 8 parameter sets outside the training grid
+# NN-PGD: 12 greedy linear modes, then greedy SVK enrichment up to 20 modes (lowest error)
+try:
+    data = pd.read_csv("SVK_lung_6D_errors.csv")
+except:
+    data = pd.read_csv("Figures/SVK_lung_6D_errors.csv")
+
+hover = ('E = %{customdata[0]:.2f} kPa<br>θ = %{customdata[1]:.2f}, φ = %{customdata[2]:.2f}<br>'
+         'p₀ = %{customdata[3]:.2f} kPa<br>H = %{customdata[4]:.2f}, K = %{customdata[5]:.2f} Pa/mm<br>'
+         'error = %{y:.1f} %<extra></extra>')
+cd = data[['E_kPa', 'theta', 'phi', 'p0_kPa', 'H_Pa_mm', 'K_Pa_mm']].values
+
+fig = go.Figure()
+fig.add_trace(go.Bar(
+    x=data['Point'], y=100 * data['NNPGD_error'],
+    name='NN-PGD (SVK)',
+    marker=dict(color='#3a46f5'),
+    customdata=cd, hovertemplate=hover
+))
+fig.add_trace(go.Bar(
+    x=data['Point'], y=100 * data['Linear_FEM_error'],
+    name='Linear FEM',
+    marker=dict(color='rgba(23, 15, 56, 0.35)'),
+    customdata=cd, hovertemplate=hover
+))
+
+fig.update_layout(
+    plot_bgcolor='rgba(0,0,0,0)',  # Remove background color
+    width=450, 
+    height=400,  
+    barmode='group',
+    xaxis=dict(title='Test parameter set',
+               tickvals=list(range(1, 9)),
+               showgrid=False),
+    yaxis=dict(
+        title=dict(
+            text='Relative L² error (%)', 
+            font=dict(color='#170f38')),
+        tickfont=dict(color='#170f38'),
+        showgrid=True,
+        gridcolor='lightgray'
+    ),
+    legend=dict(x=0.02, y=1.0)
+)
+
+# Show the figure
+fig.show()
+
+```

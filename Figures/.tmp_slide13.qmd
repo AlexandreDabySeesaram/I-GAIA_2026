@@ -1,0 +1,43 @@
+## Non-linear lung digital twin
+
+:::: {.columns}
+
+::: {.column width="45%"}
+
+![](Schemes/lung_pressure_zoomed.svg){width=40% fig-align="center"}
+
+$$
+\begin{aligned}
+\Pi = & \int_{\Omega_0} \Psi_{\text{SVK}}\left(\matrice{E}\right) \mathrm{d}V - \int_{\Omega_0} \vect{f}\left(\theta, \phi\right) \cdot \vect{u} \, \mathrm{d}V \\
+& + \frac{1}{2}\int_{\partial \Omega_0} k_b \left( \vect{u}\cdot \vect{N} \right)^2 \mathrm{d}S - W_p
+\end{aligned}
+$$
+
+* Follower pressure on the deformed surface
+  * $\delta W_p = \int_{\partial \Omega_t} p \, \vect{n} \cdot \delta \vect{u} \, \mathrm{d}a$
+  * $p = p_0 + H\left(z-z_0 \right) + K\left(y-y_0 \right)$
+
+:::: {.mybox}
+
+::: {.mybox-header}
+6 parameters
+:::
+
+::: {.mybox-body}
+* $E$, $\left(\theta, \phi\right)$, $\left(p_0, H, K\right)$
+* **No linearisation by hand** (autodiff)
+:::
+
+::::
+
+:::
+
+::: {.column width="55%"}
+
+<iframe width="100%" height="520" src="Resources/AR/Breathing_ROM_SVK.html" style="border:0" allow="fullscreen" allowfullscreen></iframe>
+
+:::
+
+::::
+
+

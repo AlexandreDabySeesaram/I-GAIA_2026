@@ -1,0 +1,89 @@
+## Proper Generalised Decomposition (PGD) {auto-animate=true visibility="uncounted"} 
+
+
+
+* Proper Generalised Decomposition (PGD) : [@ladevezeFamilleDalgorithmesMecanique1985;@chinestaShortReviewModel2011]
+
+::: columns
+
+::: {.column  width="50%"}
+
+:::{.mybox}
+
+::::{.mybox-header}
+Tensor Decomposition 
+::::
+
+::::{.mybox-body}
+
+* $\textcolor{LGreen}{\textcolor{LGreen}{\para}}$  parameters (material, shape, loading, etc.)
+* Curse of dimensionality 
+
+::: {.r-stack}
+::: {data-id="1" }
+$$            
+\textcolor{VioletLMS_2}{\vect{u}}\left(\textcolor{Blue}{\vect{x}}, \textcolor{LGreen}{\para}\right) = \sum\limits_{i=1}^m \textcolor{Blue}{\overline{\vect{u}}_i(\vect{x})} ~\textcolor{LGreen}{\prod_{j=1}^{\beta}\lambda_i^j(\mu^j)}$$ 
+:::
+:::
+
+* $\textcolor{Blue}{\overline{\vect{u}}_i(\vect{x})}$ space modes
+* $\textcolor{LGreen}{\lambda_i^j(\mu^j)}$ parameter modes
+
+
+
+
+:::
+
+:::
+
+:::
+
+::: {.column  width="50%"}
+
+**Discretised problem**
+
+::: {.r-stack}
+::: {data-id="2" }
+
+:::: {style='margin-top: -3em;'}
+::::
+
+![3D PGD](Schemes/PGD_3D.svg){height=250}
+:::
+:::
+::: {.r-stack}
+::: {data-id="2" }
+* From $\textcolor{VioletLMS_2}{N\times\prod\limits_{j=1}^{~\beta} N_{\mu}^j}$ unknowns to $\textcolor{Blue}{m\times\left(N + \sum\limits_{j=1}^{\beta} N_{\mu}^j\right)}$
+  * *e.g.* $\textcolor{VioletLMS_2}{10000 \times 1000^2 = 10^{10}} \gg \textcolor{Blue}{ 5\left( 10 000+ 2\times 1000 \right) = 6 \times 10^4}$
+:::
+:::
+:::
+
+:::
+
+
+
+:::: {style='margin-top: -1.2em;'}
+::::
+
+::: {.fragment .fade-up}
+* Finding the tensor decomposition by **minimising** the **energy**
+$$
+        \underbrace{\left(\left\{\overline{\vect{u}}_i \right\}_{i\in \llbracket 1,m\rrbracket},\left\{\lambda_i^j \right\}_{
+          \begin{cases}
+              i\in \llbracket 1,m\rrbracket \\
+              j\in \llbracket 1,\beta \rrbracket
+          \end{cases}
+        } \right)}_{\boldsymbol{\theta}} = \argmin_{
+            \begin{cases}
+                \left(\overline{\vect{u}}_1, \left\{\overline{\vect{u}}_i \right\} \right) & \in \mathcal{U}\times \mathcal{U}_0 \\ 
+                \left\{\left\{\lambda_i^j \right\}\right\} & \in \left( \bigtimes_{j=1}^{~\beta} \mathcal{L}_2\left(\mathcal{B}_j\right) \right)^{m-1}
+            \end{cases}}  ~\underbrace{\int_{\mathcal{B}}\left[E_p\left(\vect{u}\left(\vect{x},\para\right), \ftensor{C}, \vect{F}, \vect{f} \right)  \right]\mathrm{d}\beta}_{\mathcal{L}}
+            \label{eq:min_problem}
+$$
+
+:::
+
+
+
+

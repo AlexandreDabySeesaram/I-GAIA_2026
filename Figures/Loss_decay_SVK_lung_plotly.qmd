@@ -1,0 +1,51 @@
+```{python}
+#| label: ModeGainSVK
+#| fig-cap: "Energy gain of each new mode"
+
+import plotly.graph_objects as go
+import pandas as pd
+
+# Load the CSV data (one row per converged mode; Gain = relative loss decrease brought by that mode)
+try:
+    data = pd.read_csv("SVK_lung_6D_greedy_modes.csv")
+except:
+    data = pd.read_csv("Figures/SVK_lung_6D_greedy_modes.csv")
+data = data[data['Modes'] > 1]   # the first mode has a gain of 1 by definition
+
+# Create the figure
+fig = go.Figure()
+
+fig.add_trace(go.Bar(
+    x=data['Modes'], y=data['Gain'],
+    name='Gain',
+    marker=dict(color='#3a46f5'),
+    customdata=data['Iterations'],
+    hovertemplate='mode %{x}<br>gain %{y:.1e}<br>%{customdata} iterations<extra></extra>'
+))
+
+# Update layout
+fig.update_layout(
+    plot_bgcolor='rgba(0,0,0,0)',  # Remove background color
+    width=450, 
+    height=400,  
+    xaxis=dict( title='Mode',
+                tickvals=[2, 4, 6, 8, 10, 12, 14],
+                showgrid=False),
+    yaxis=dict(
+        title=dict(
+            text='Relative energy gain', 
+            font=dict(color='#170f38')),
+        type='log',
+        tickvals=[1e-4, 1e-3, 1e-2, 1e-1],
+        ticktext=['10⁻⁴', '10⁻³', '10⁻²', '10⁻¹'],
+        tickfont=dict(color='#170f38'),
+        showgrid=True,
+        gridcolor='lightgray', 
+    ),
+    showlegend=False
+)
+
+# Show the figure
+fig.show()
+
+```

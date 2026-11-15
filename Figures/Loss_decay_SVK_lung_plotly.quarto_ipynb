@@ -1,0 +1,71 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: ModeGainSVK\n",
+        "#| fig-cap: Energy gain of each new mode\n",
+        "\n",
+        "import plotly.graph_objects as go\n",
+        "import pandas as pd\n",
+        "\n",
+        "# Load the CSV data (one row per converged mode; Gain = relative loss decrease brought by that mode)\n",
+        "try:\n",
+        "    data = pd.read_csv(\"SVK_lung_6D_greedy_modes.csv\")\n",
+        "except:\n",
+        "    data = pd.read_csv(\"Figures/SVK_lung_6D_greedy_modes.csv\")\n",
+        "data = data[data['Modes'] > 1]   # the first mode has a gain of 1 by definition\n",
+        "\n",
+        "# Create the figure\n",
+        "fig = go.Figure()\n",
+        "\n",
+        "fig.add_trace(go.Bar(\n",
+        "    x=data['Modes'], y=data['Gain'],\n",
+        "    name='Gain',\n",
+        "    marker=dict(color='#3a46f5'),\n",
+        "    customdata=data['Iterations'],\n",
+        "    hovertemplate='mode %{x}<br>gain %{y:.1e}<br>%{customdata} iterations<extra></extra>'\n",
+        "))\n",
+        "\n",
+        "# Update layout\n",
+        "fig.update_layout(\n",
+        "    plot_bgcolor='rgba(0,0,0,0)',  # Remove background color\n",
+        "    width=450, \n",
+        "    height=400,  \n",
+        "    xaxis=dict( title='Mode',\n",
+        "                tickvals=[2, 4, 6, 8, 10, 12, 14],\n",
+        "                showgrid=False),\n",
+        "    yaxis=dict(\n",
+        "        title=dict(\n",
+        "            text='Relative energy gain', \n",
+        "            font=dict(color='#170f38')),\n",
+        "        type='log',\n",
+        "        tickvals=[1e-4, 1e-3, 1e-2, 1e-1],\n",
+        "        ticktext=['10⁻⁴', '10⁻³', '10⁻²', '10⁻¹'],\n",
+        "        tickfont=dict(color='#170f38'),\n",
+        "        showgrid=True,\n",
+        "        gridcolor='lightgray', \n",
+        "    ),\n",
+        "    showlegend=False\n",
+        ")\n",
+        "\n",
+        "# Show the figure\n",
+        "fig.show()"
+      ],
+      "id": "ModeGainSVK",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/opt/homebrew/Caskroom/miniconda/base/envs/quarto-env/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
