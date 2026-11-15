@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/quarto-contrib/iconify-2.1.0/iconify-icon.min.js"></script>
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.36">
+
+  <meta name="author" content="Alexandre Daby-Seesaram ">
+  <meta name="author" content="Martin Genet ">
+  <meta name="author" content="Katerina Skardova ">
+  <meta name="dcterms.date" content="2026-11-16">
+  <title>Finite Element Neural Network Interpolation: Hybridisation with the Proper Generalised Decomposition for Surrogate Modelling</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-b5ae10054c6e195d010c0d433034359f.css">
+  <link rel="stylesheet" href="Template/ENSTA.css">
+  <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+  
+  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+  <script type="text/javascript">
+  window.PlotlyConfig = {MathJaxConfig: 'local'};
+  if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+  if (typeof require !== 'undefined') {
+  require.undef("plotly");
+  requirejs.config({
+      paths: {
+          'plotly': ['https://cdn.plot.ly/plotly-2.20.0.min']
+      }
+  });
+  require(['plotly'], function(Plotly) {
+      window._Plotly = Plotly;
+  });
+  }
+  </script>
+
+  <script>
+    window.PlotlyConfig = {MathJaxConfig: 'local'};
+  </script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="Template/BG.svg" class="quarto-title-block center">
+  <h1 class="title">Finite Element Neural Network Interpolation: Hybridisation with the Proper Generalised Decomposition for Surrogate Modelling</h1>
+  <p class="subtitle">GDR I-GAIA Week 2026</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Alexandre Daby-Seesaram <sup><span style="color:#a6ce39ff"><a href="https://orcid.org/0000-0002-2374-0971"><iconify-icon role="img" inline="" icon="fa-brands:orcid" aria-label="Icon orcid from fa-brands Iconify.design set." title="Icon orcid from fa-brands Iconify.design set."></iconify-icon></a></span></sup> 
+</div>
+<div class="quarto-title-author-email">
+<a href="mailto:alexandre.daby-seesaram@polytechnique.edu">alexandre.daby-seesaram@polytechnique.edu</a>
+</div>
+        <p class="quarto-title-affiliation">
+            LMI, ENSTA, IP Paris, France
+          </p>
+    </div>
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Martin Genet <sup><span style="color:#a6ce39ff"><a href="https://orcid.org/0000-0003-2204-201X"><iconify-icon role="img" inline="" icon="fa-brands:orcid" aria-label="Icon orcid from fa-brands Iconify.design set." title="Icon orcid from fa-brands Iconify.design set."></iconify-icon></a></span></sup> 
+</div>
+<div class="quarto-title-author-email">
+<a href="mailto:martin.genet@polytechnique.edu">martin.genet@polytechnique.edu</a>
+</div>
+        <p class="quarto-title-affiliation">
+            LMS, École Polytechnique, IP Paris, France
+          </p>
+    </div>
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Katerina Skardova <sup><span style="color:#a6ce39ff"><a href="https://orcid.org/0000-0002-9870-3438"><iconify-icon role="img" inline="" icon="fa-brands:orcid" aria-label="Icon orcid from fa-brands Iconify.design set." title="Icon orcid from fa-brands Iconify.design set."></iconify-icon></a></span></sup> 
+</div>
+<div class="quarto-title-author-email">
+<a href="mailto:katerina.skardova@polytechnique.edu">katerina.skardova@polytechnique.edu</a>
+</div>
+        <p class="quarto-title-affiliation">
+            LMS, École Polytechnique, IP Paris, France
+          </p>
+    </div>
+</div>
+
+  <p class="date">November 16, 2026</p>
+</section>
+<section>
+
+<section id="why-a-lung-digital-twin" class="slide level2">
+<h2>Why a lung digital twin ?</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><video data-src="Figures/Movies/lung-im.mp4" loop="true" autoplay="true" height="250" controls=""><a href="Figures/Movies/lung-im.mp4">Video</a></video></p>
+<figcaption>Inspiration &amp; expiration of diseased lungs</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><video data-src="Figures/Movies/Lungs_digital_twin.mp4" loop="true" autoplay="true" height="250" controls=""><a href="Figures/Movies/Lungs_digital_twin.mp4">Video</a></video></p>
+<figcaption>Digital twin from images</figcaption>
+</figure>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Objectives</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li><p>See <strong>Martin</strong>’s talk on Wednesday at the plenary session</p></li>
+<li><p>Improved understanding of the <strong>mechanically-driven</strong> physiological mechanisms</p></li>
+<li><p><em>In silico</em> prognostics</p>
+<ul>
+<li>Transfer tools to the clinic</li>
+<li>Patient-specific <strong>digital twins</strong></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Requirements</p>
+</div>
+<div class="mybox-body">
+<div class="fragment fade-in" data-fragment-index="1">
+<ul>
+<li><span class="positive">Mechanical model of the lung <span class="citation" data-cites="patteQuasistaticPoromechanicalModel2022 peyrautQuantificationDincertitudesPour2024a">(<a href="#/references" role="doc-biblioref" onclick="">Patte et al., 2022</a>; <a href="#/references" role="doc-biblioref" onclick="">Peyraut &amp; Genet, 2024</a>)</span></span></li>
+</ul>
+</div>
+<div class="fragment fade-in">
+<ul>
+<li><span class="warning">Uncertainty quantification <span class="citation" data-cites="zotero-2069 lavilleComparisonOptimizationParametrizations2023">(<a href="#/references" role="doc-biblioref" onclick="">Laville et al., 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Peyraut &amp; Genet, 2025</a>)</span></span></li>
+</ul>
+</div>
+<div class="fragment fade-in">
+<ul>
+<li><span class="important"><strong>Real-time</strong> estimation of the parameters</span></li>
+</ul>
+</div>
+<div style="margin-top: 0.9em;">
+
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="lung-poro-mechanics-pattequasistaticporomechanicalmodel2022." class="slide level2 custom-h2-links">
+<h2>Lung poro-mechanics <span class="citation" data-cites="patteQuasistaticPoromechanicalModel2022">(<a href="#/references" role="doc-biblioref" onclick="">Patte et al., 2022</a>)</span>.</h2>
+<!-- Include my latex headers with notations and colours -->
+<p><span class="math display">\[
+\definecolor{Violet}{RGB}{162, 32, 185}
+\definecolor{Teal}{RGB}{0, 103, 127}
+\definecolor{Blue}{RGB}{58, 70, 245}
+\definecolor{Green}{RGB}{0,103,127}
+\definecolor{LGreen}{RGB}{62,128,102}
+\definecolor{red}{RGB}{206,0,55}
+\]</span></p>
+<div class="columns">
+<div class="column" style="width:65%;">
+<div data-id="2">
+<p><strong>Weak formulation</strong> :</p>
+<div style="margin-top: 3em;">
+
+</div>
+<p><span class="math display">\[
+         \begin{cases}
+            \int_{\Omega} \boldsymbol{\Sigma} : d_{\boldsymbol{u}}\boldsymbol{E}\left( \boldsymbol{u^*} \right) ~\mathrm{d}\Omega= W_{\text{ext}}\left(\boldsymbol{u},\boldsymbol{u^*}\right) ~\forall \boldsymbol{u^*} \in H^1_0\left(\Omega \right) \\[4mm]
+            \int_{\Omega} \left(pf + \frac{\partial \Psi \left(\boldsymbol{u},\Phi_f\right)}{\partial \Phi_s}\right) \Phi_f^* ~\mathrm{d}\Omega= 0 ~\forall \Phi_f^*
+         \end{cases}
+         \label{eq:MechPb_lung}
+\]</span></p>
+</div>
+</div><div class="column" style="width:35%;">
+<div data-id="3">
+<p><strong>Kinematics</strong>:</p>
+<ul>
+<li><span class="math inline">\(\boldsymbol{F} = \boldsymbol{1} + \boldsymbol{\nabla}\boldsymbol{u}\)</span> - deformation gradient</li>
+<li><span class="math inline">\(\boldsymbol{C} = \boldsymbol{F}^T \cdot \boldsymbol{F}\)</span> - right Cauchy-Green tensor</li>
+<li><span class="math inline">\(\boldsymbol{E} = \frac{1}{2}\left(\boldsymbol{C} -\boldsymbol{1} \right)\)</span> - Green-Lagrange tensor
+<ul>
+<li><span class="math inline">\(I_1 = \text{tr}\left(\boldsymbol{C} \right)\)</span> - first invariant of <span class="math inline">\(\boldsymbol{C}\)</span></li>
+<li><span class="math inline">\(I_2 = \frac{1}{2} \left(\text{tr}\left(\boldsymbol{C} \right)^2 - \text{tr}\left( \boldsymbol{C}^2 \right) \right)\)</span></li>
+</ul></li>
+</ul>
+</div>
+</div></div>
+<div class="mybox">
+<div class="mybox-header">
+<p>Behaviour</p>
+</div>
+<div class="mybox-body">
+<div data-id="1">
+<ul>
+<li><span class="math inline">\(\boldsymbol{\Sigma} = \frac{\partial \Psi_s + \Psi_f}{\partial \boldsymbol{E}} = \frac{\partial \Psi_s }{\partial \boldsymbol{E}} + p_f J \boldsymbol{C}^{-1}\)</span> - The second Piola-Kirchhoff stress tensor
+<ul>
+<li><span class="math inline">\(p_f = -\frac{\partial \Psi_s}{\partial \Phi_s}\)</span> - fluid pressure</li>
+</ul></li>
+<li><span class="math inline">\(\Psi_s\left(\boldsymbol{E}, \Phi_s \right) = W_{\text{skel}} + W_{\text{bulk}}\)</span>
+<span class="math display">\[\begin{cases}
+  W_{\text{skel}} = \beta_1\left(I_1 - \text{tr}\left(I_d\right) -2 \text{ln}\left(\mathrm{det}\left(\boldsymbol{F} \right)\right)\right) + \beta_2 \left(I_2 -3 -4\text{ln}\left(\mathrm{det}\left(\boldsymbol{F} \right)\right)\right) + \alpha \left( e^{\delta\left(\mathrm{det}\left(\boldsymbol{F} \right)^2-1-2\text{ln}\left(\mathrm{det}\left(\boldsymbol{F} \right)\right) \right)} -1\right)\\
+  W_{\text{bulk}} = \kappa \left( \frac{\Phi_s}{1-\Phi_{f0}} -1 -\text{ln}\left( \frac{\Phi_s}{1-\Phi_{f0}}\right) \right)
+\end{cases}\]</span></li>
+<li><span class="math inline">\(\Phi_s\)</span> current volume fraction of solid pulled back on the reference configurations</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="simpler-mechanical-problem---surrogate-modelling" class="slide level2">
+<h2>Simpler mechanical problem - surrogate modelling</h2>
+<ul>
+<li><strong>Parametrised</strong> (patient-specific) mechanical problem</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:65%;">
+<div style="margin-top: 3em;">
+
+</div>
+<div data-id="2">
+<p><span class="math display">\[
+      \boldsymbol{u} = \mathop{\mathrm{arg\,min}}_{H^1\left(\Omega \right)} \int_{\Omega} \Psi\left( \boldsymbol{E}\left(\boldsymbol{u}\left(\textcolor{Blue}{\boldsymbol{x}}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right)\right) \right) ~\mathrm{d}\Omega- W_{\text{ext}}\left(\textcolor{Blue}{\boldsymbol{x}}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right)
+\]</span></p>
+</div>
+</div><div class="column" style="width:35%;">
+<div data-id="3">
+<p><strong>Kinematics</strong>:</p>
+<ul>
+<li><span class="math inline">\(\boldsymbol{F} = \boldsymbol{1} + \boldsymbol{\nabla}\boldsymbol{u}\)</span> - deformation gradient</li>
+<li><span class="math inline">\(\boldsymbol{C} = \boldsymbol{F}^T \cdot \boldsymbol{F}\)</span> - right Cauchy-Green tensor</li>
+<li><span class="math inline">\(\boldsymbol{E} = \frac{1}{2}\left(\boldsymbol{C} -\boldsymbol{1} \right)\)</span> - Green-Lagrange tensor
+<ul>
+<li><span class="math inline">\(I_1 = \text{tr}\left(\boldsymbol{C} \right)\)</span> - first invariant of <span class="math inline">\(\boldsymbol{C}\)</span></li>
+</ul></li>
+</ul>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div data-id="1">
+<div class="mybox">
+<div class="mybox-header">
+<p>Behaviour - Saint Venant-Kirchhoff</p>
+</div>
+<div class="mybox-body">
+<div style="margin-top: 2.5em;">
+
+</div>
+<p><span class="math inline">\(\Psi = \frac{\lambda}{2} \text{tr}\left(\boldsymbol{E}\right)^2 + \mu \boldsymbol{E}:\boldsymbol{E}\)</span></p>
+<ul>
+<li>Unstable under compression</li>
+<li><span class="math inline">\(\nu = 0.49\)</span> for quasi-incompressibility
+<ul>
+<li>Soft tissues are often modelled as incompressible materials</li>
+</ul></li>
+</ul>
+<div style="margin-top: 4em;">
+
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Reduced-order model (ROM)</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Build a <strong>surrogate model</strong>
+<ul>
+<li>Parametrised solution <span class="math inline">\(\boldsymbol{u}\left(\textcolor{Blue}{\boldsymbol{x}}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right)\)</span></li>
+<li>In modern terms, we want to learn a <strong>displacement field operator</strong> <span class="math inline">\(\textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}} \mapsto \boldsymbol{u}\left(\textcolor{Blue}{\cdot}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right)\)</span></li>
+</ul></li>
+<li>No computations online</li>
+<li><strong>On the fly</strong> evaluation of the model
+<ul>
+<li>Real-time parameters estimation</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div></div>
+<!-- # Outline {.part-slide}
+
++--------------------------------------+
+|  1. **General Surrogate modelling methods and results**                               |
++--------------------------------------+
+|  2. **Focus on patient-specific shape parametrisation**                               |
++--------------------------------------+
+
+ -->
+</section></section>
+<section>
+<section id="outline" class="title-slide slide level1 part-slide center">
+<h1>Outline</h1>
+<table class="caption-top">
+<colgroup>
+<col style="width: 101%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><ol type="1">
+<li><strong>Mechanical solution interpolation</strong></li>
+</ol></td>
+</tr>
+<tr class="even">
+<td><ol start="2" type="1">
+<li><strong>Reduced-order modelling</strong></li>
+</ol></td>
+</tr>
+<tr class="odd">
+<td><ol start="3" type="1">
+<li><strong>Hybrid Neural Network Proper Generalised Decomposition</strong></li>
+</ol></td>
+</tr>
+<tr class="even">
+<td><ol start="4" type="1">
+<li><strong>Results</strong></li>
+</ol></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="interpolation-of-the-solution" class="slide level2">
+<h2>Interpolation of the solution</h2>
+<p><!-- * From the continuous problem of finding the displacement $\vect{u}$ in 
+
+$$
+    \mathcal{U} = \left\{\vect{u} \; | \; \vect{u}\left(\vect{x}\right) \in \mathcal{H}^1\left(\Omega, \mathbb{R}^{\text{d}}\right) \text{, }
+    \vect{u} = \vect{u}_d \text{ on }\partial \Omega_d  \right\}  
+$$ --></p>
+<div class="columns">
+<div class="column" style="width:55%;">
+<ul>
+<li><strong>FEM</strong> finite admissible space</li>
+</ul>
+<p><span class="math display">\[
+    \mathcal{U}_h = \left\{\boldsymbol{u}_h  \; | \; \boldsymbol{u}_h \in \text{Span}\left( \left\{ N_i^{\Omega}\left(\boldsymbol{x} \right)\right\}_{i \in \mathopen{~[\!\![~}1,N\mathclose{~]\!\!]}} \right)^d \text{, }
+    \boldsymbol{u}_h = \boldsymbol{u}_d \text{ on }\partial \Omega_d  \right\}
+\]</span></p>
+</div><div class="column" style="width:45%;">
+<div class="fragment fade-left">
+<div class="green-bullets">
+<ul>
+<li>Interpretabilty</li>
+<li>Kronecker property
+<ul>
+<li>Easy to prescribe Dirichlet boundary conditions</li>
+</ul></li>
+</ul>
+</div>
+<div class="red-bullets">
+<ul>
+<li>Mesh adaptation not directly embedded in the method</li>
+</ul>
+</div>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="fragment fade-up">
+<ul>
+<li>Fully connected Neural Networks (<em>e.g.,</em> PINNS)</li>
+</ul>
+<p><span class="math display">\[ \boldsymbol{u} \left(x_{0,0,0} \right) = \sum\limits_{i = 0}^C \sum\limits_{j = 0}^{N_i} \sigma \left( \sum\limits_{k = 0}^{M_{i,j}} b_{i,j}+\omega_{i,j,k}~ x_{i,j,k} \right) \]</span></p>
+</div>
+</div><div class="column" style="width:45%;">
+<div class="fragment fade-left">
+<div class="green-bullets">
+<ul>
+<li>All interpolation parameters are trainable</li>
+<li>Benefits from ML developments</li>
+</ul>
+</div>
+<div class="red-bullets">
+<ul>
+<li>Not easily interpretable</li>
+<li>Difficult to prescribe Dirichlet boundary conditions</li>
+</ul>
+</div>
+</div>
+</div></div>
+<div class="fragment fade-up">
+<div class="columns">
+<div class="column" style="width:55%;">
+<ul>
+<li><strong>HiDeNN</strong> framework <span class="citation" data-cites="zhangHierarchicalDeeplearningNeural2021 liuHiDeNNFEMSeamlessMachine2023 parkConvolutionHierarchicalDeeplearning2023">(<a href="#/references" role="doc-biblioref" onclick="">Liu et al., 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Park et al., 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Zhang et al., 2021</a>)</span>
+<ul>
+<li>Best of both worlds</li>
+<li>Reproducing <strong>FEM interpolation</strong> with constrained sparse neural networks</li>
+<li><span class="math inline">\(N_i^{\Omega}\)</span> are SNN with constrained <strong>weights</strong> and <strong>biases</strong></li>
+<li>Fully <span class="positive"><strong>interpretable</strong></span> parameters</li>
+<li>Continuous interpolated field that can be <strong>automatically differentiated</strong></li>
+<li>Runs on <strong>GPUs</strong></li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:45%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/HiDeNN_Space_2.svg" width="400"></p>
+<figcaption>Illustration of the framework</figcaption>
+</figure>
+</div>
+</div></div>
+</div>
+</section>
+<section id="solving-the-mechanical-problem-skardovafiniteelementneural2025." class="slide level2 custom-h2-links">
+<h2>Solving the mechanical problem <span class="citation" data-cites="skardovaFiniteElementNeural2025">(<a href="#/references" role="doc-biblioref" onclick="">Škardová et al., 2025</a>)</span>.</h2>
+<p>Solving the mechanical problems amounts to finding the continuous displacement field <strong>minimising the potential energy</strong> <span class="math display">\[E_p\left(\boldsymbol{u}\right) = \int_{\Omega}\Psi\left(\boldsymbol{E}\left(\boldsymbol{u}\right)\right) ~\mathrm{d}\Omega- \int_{\partial \Omega_N}\boldsymbol{F}\cdot \boldsymbol{u} ~\mathrm{d}A- \int_{\Omega}\boldsymbol{f}\cdot\boldsymbol{u}~\mathrm{d}\Omega, \qquad \text{e.g. SVK: } \Psi = \frac{1}{2}\boldsymbol{E} : \mathbb{C} : \boldsymbol{E} \]</span></p>
+<div style="margin-top: -0.5em;">
+
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>In practice</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Compute the loss <span class="math inline">\(\mathcal{L} := E_p\)</span></li>
+<li>Find the parameters <strong>minimising</strong> the loss
+<ul>
+<li>Rely on state-of-the-art optimizers (ADAM, <strong>LBFGS</strong>, etc.)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Degrees of freedom (Dofs)</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Nodal values (standard FEM Dofs)</li>
+<li>Nodal coordinates (Mesh adaptation)
+<ul>
+<li>hr-adaptivity</li>
+</ul></li>
+</ul>
+<div style="margin-top: 0.15em;">
+
+</div>
+</div>
+</div>
+</div></div>
+<div style="margin-top: -1.2em;">
+
+</div>
+<div class="fragment fade-in">
+<div class="columns">
+<div class="column" style="width:32%;">
+<div style="margin-top: 0.5em;">
+
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><video data-src="Figures/Movies/r_adaptivity.mp4" loop="true" autoplay="true" height="300" controls=""><a href="Figures/Movies/r_adaptivity.mp4">Video</a></video></p>
+<figcaption>r-adaptivity</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><video data-src="Figures/Movies/RH_adaptivity.mp4" loop="true" autoplay="true" height="300" controls=""><a href="Figures/Movies/RH_adaptivity.mp4">Video</a></video></p>
+<figcaption>rh-adaptivity</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:24%;">
+<div style="margin-top: 3em;">
+
+</div>
+<p><strong>h-adaptivity</strong>: red-green refinement</p>
+<div class="fragment fade-up">
+<p><strong>technical details:</strong></p>
+<p><iconify-icon role="img" inline="" icon="fa-solid:newspaper" aria-label="Icon newspaper from fa-solid Iconify.design set." title="Icon newspaper from fa-solid Iconify.design set."></iconify-icon> &nbsp; <strong>Paper</strong> <span class="citation" data-cites="skardovaFiniteElementNeural2025">(<a href="#/references" role="doc-biblioref" onclick="">Škardová et al., 2025</a>)</span></p>
+</div>
+</div></div>
+</div>
+</section>
+<section id="reduced-order-modelling-rom" class="slide level2">
+<h2>Reduced-order modelling (ROM)</h2>
+<p><strong>Low-rank</strong> approximation of the solution to avoid the <strong>curse of dimensionality</strong> with <span class="math inline">\(\beta\)</span> parameters</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Full-order discretised model</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li><span class="math inline">\(N\)</span> spatial shape functions
+<ul>
+<li>Span a finite spatial space of dimension <span class="math inline">\(N\)</span></li>
+</ul></li>
+<li>Requires computing <span class="math inline">\(N\times \beta\)</span> associated parametric functions</li>
+</ul>
+<div style="margin-top: 1.7em;">
+
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Reduced-order model</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li><span class="math inline">\(m \ll N\)</span> spatial modes
+<ul>
+<li>Similar to global shape functions</li>
+<li>Span a <strong>smaller space</strong></li>
+</ul></li>
+<li>Galerkin projection</li>
+</ul>
+</div>
+</div>
+</div></div>
+<div class="mybox">
+<div class="mybox-header-bis">
+<p>Finding the reduced-order basis - mostly from previous expensive computations</p>
+</div>
+<div class="mybox-body">
+<div class="columns">
+<div class="column" style="width:65%;">
+<ul>
+<li><strong>Linear Normal Modes</strong> (eigenmodes of the structure) <span class="citation" data-cites="hansteenAccuracyModeSuperposition1979">(<a href="#/references" role="doc-biblioref" onclick="">Hansteen &amp; Bell, 1979</a>)</span>
+<ul>
+<li>Do not account for the loading and behaviour specifics</li>
+</ul></li>
+<li><strong>Proper Orthogonal Decomposition</strong> <span class="citation" data-cites="chatterjeeIntroductionProperOrthogonal2000 radermacherComparisonProjectionbasedModel2013">(<a href="#/references" role="doc-biblioref" onclick="">Chatterjee, 2000</a>; <a href="#/references" role="doc-biblioref" onclick="">Radermacher &amp; Reese, 2013</a>)</span>
+<ul>
+<li>Require wise selection of the snapshots and costly computations</li>
+</ul></li>
+<li><strong>Reduced basis method</strong> <span class="citation" data-cites="madayReducedBasisElementMethod2002">(<a href="#/references" role="doc-biblioref" onclick="">Maday &amp; Rønquist, 2002</a>)</span> with EIM <span class="citation" data-cites="barraultEmpiricalInterpolationMethod2004">(<a href="#/references" role="doc-biblioref" onclick="">Barrault et al., 2004</a>)</span>
+<ul>
+<li>Rely on prior expensive computations</li>
+</ul></li>
+<li><strong>Auto-encoders</strong> for non-linear ROM <span class="citation" data-cites="tomasettoLatentFeedbackControl2025">(<a href="#/references" role="doc-biblioref" onclick="">Tomasetto et al., 2025</a>)</span>
+<ul>
+<li>Also relies previously generated data/snapshots</li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:35%;">
+<div class="fragment fade-left">
+<div style="margin-top: 3em;">
+
+</div>
+<ul>
+<li><em>A priori</em> ROM methods relying <strong>only on the PDEs</strong>
+<ul>
+<li>such as the PGD</li>
+</ul></li>
+</ul>
+</div>
+</div></div>
+</div>
+</div>
+</section>
+<section id="proper-generalised-decomposition-pgd" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Proper Generalised Decomposition (PGD)</h2>
+<ul>
+<li>Proper Generalised Decomposition (PGD) : <span class="citation" data-cites="ladevezeFamilleDalgorithmesMecanique1985 chinestaShortReviewModel2011">(<a href="#/references" role="doc-biblioref" onclick="">Chinesta et al., 2011</a>; <a href="#/references" role="doc-biblioref" onclick="">Ladeveze, 1985</a>)</span></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Tensor Decomposition</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li><span class="math inline">\(\textcolor{LGreen}{\textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}}\)</span> parameters (material, shape, loading, etc.)</li>
+<li>Curse of dimensionality</li>
+</ul>
+<div class="r-stack">
+<div data-id="1">
+<p><span class="math display">\[
+\textcolor{VioletLMS_2}{\boldsymbol{u}}\left(\textcolor{Blue}{\boldsymbol{x}}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right)\]</span></p>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>Discretised problem</strong></p>
+<div class="r-stack">
+<div data-id="2">
+<div style="margin-top: -3em;">
+
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Schemes/PGD_3D_cube.svg" height="250"></p>
+<figcaption>3D PGD</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="r-stack">
+<div data-id="2">
+<ul>
+<li><span class="math inline">\(\textcolor{VioletLMS_2}{N\times\prod\limits_{j=1}^{~\beta} N_{\mu}^j}\)</span> unknowns
+<ul>
+<li><em>e.g.</em> <span class="math inline">\(\textcolor{VioletLMS_2}{10000 \times 1000^2 = 10^{10}}\)</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div></div>
+</section>
+<section id="proper-generalised-decomposition-pgd-1" class="slide level2" data-auto-animate="true" data-visibility="uncounted">
+<h2 data-id="quarto-animate-title">Proper Generalised Decomposition (PGD)</h2>
+<ul>
+<li>Proper Generalised Decomposition (PGD) : <span class="citation" data-cites="ladevezeFamilleDalgorithmesMecanique1985 chinestaShortReviewModel2011">(<a href="#/references" role="doc-biblioref" onclick="">Chinesta et al., 2011</a>; <a href="#/references" role="doc-biblioref" onclick="">Ladeveze, 1985</a>)</span></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Tensor Decomposition</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li><span class="math inline">\(\textcolor{LGreen}{\textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}}\)</span> parameters (material, shape, loading, etc.)</li>
+<li>Curse of dimensionality</li>
+</ul>
+<div class="r-stack">
+<div data-id="1">
+<p><span class="math display">\[            
+\textcolor{VioletLMS_2}{\boldsymbol{u}}\left(\textcolor{Blue}{\boldsymbol{x}}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right) = \sum\limits_{i=1}^m \textcolor{Blue}{\overline{\boldsymbol{u}}_i(\boldsymbol{x})} ~\textcolor{LGreen}{\prod_{j=1}^{\beta}\lambda_i^j(\mu^j)}\]</span></p>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(\textcolor{Blue}{\overline{\boldsymbol{u}}_i(\boldsymbol{x})}\)</span> space modes</li>
+<li><span class="math inline">\(\textcolor{LGreen}{\lambda_i^j(\mu^j)}\)</span> parameter modes</li>
+</ul>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>Discretised problem</strong></p>
+<div class="r-stack">
+<div data-id="2">
+<div style="margin-top: -3em;">
+
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Schemes/PGD_3D.svg" height="250"></p>
+<figcaption>3D PGD</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="r-stack">
+<div data-id="2">
+<ul>
+<li>From <span class="math inline">\(\textcolor{VioletLMS_2}{N\times\prod\limits_{j=1}^{~\beta} N_{\mu}^j}\)</span> unknowns to <span class="math inline">\(\textcolor{Blue}{m\times\left(N + \sum\limits_{j=1}^{\beta} N_{\mu}^j\right)}\)</span>
+<ul>
+<li><em>e.g.</em> <span class="math inline">\(\textcolor{VioletLMS_2}{10000 \times 1000^2 = 10^{10}} \gg \textcolor{Blue}{ 5\left( 10 000+ 2\times 1000 \right) = 6 \times 10^4}\)</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div></div>
+<div style="margin-top: -1.2em;">
+
+</div>
+<div class="fragment fade-up">
+<ul>
+<li>Finding the tensor decomposition by <strong>minimising</strong> the <strong>energy</strong> <span class="math display">\[
+      \left(\left\{\overline{\boldsymbol{u}}_i \right\}_{i\in \mathopen{~[\!\![~}1,m\mathclose{~]\!\!]}},\left\{\lambda_i^j \right\}_{
+        \begin{cases}
+            i\in \mathopen{~[\!\![~}1,m\mathclose{~]\!\!]}\\
+            j\in \mathopen{~[\!\![~}1,\beta \mathclose{~]\!\!]}
+        \end{cases}
+      } \right) = \mathop{\mathrm{arg\,min}}_{
+          \boldsymbol{\theta} ~= \begin{cases}
+              \left(\overline{\boldsymbol{u}}_1, \left\{\overline{\boldsymbol{u}}_i \right\} \right) &amp; \in \mathcal{U}\times \mathcal{U}_0 \\
+              \left\{\left\{\lambda_i^j \right\}\right\} &amp; \in \left( \bigtimes_{j=1}^{~\beta} \mathcal{L}_2\left(\mathcal{B}_j\right) \right)^{m-1}
+          \end{cases}}  ~\underbrace{\int_{\mathcal{B}}\left[E_p\left(\boldsymbol{u}_{\boldsymbol{\theta}}\left(\boldsymbol{x},\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}\right), \mathbb{C}, \boldsymbol{F}, \boldsymbol{f} \right)  \right]\mathrm{d}\beta}_{\mathcal{L}}
+          \label{eq:min_problem}
+\]</span></li>
+</ul>
+</div>
+</section>
+<section id="proper-generalised-decomposition-pgd-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Proper Generalised Decomposition (PGD)</h2>
+<ul>
+<li>Building the low-rank tensor decomposition greedily <span class="citation" data-cites="ladevezeFamilleDalgorithmesMecanique1985 nouyPrioriModelReduction2010">(<a href="#/references" role="doc-biblioref" onclick="">Ladeveze, 1985</a>; <a href="#/references" role="doc-biblioref" onclick="">Nouy, 2010</a>)</span></li>
+</ul>
+<div style="margin-top: -1em;">
+
+</div>
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="2">
+<div data-id="1">
+<p><span class="math display">\[
+\boldsymbol{u}_{\theta}\left(\boldsymbol{x}, \left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}\right) =  \overline{\boldsymbol{u}}(\boldsymbol{x}) ~\prod_{j=1}^{\beta}\lambda^j(\mu^j) \]</span></p>
+</div>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="2">
+<p><span class="math display">\[
+\boldsymbol{u}_{\theta}\left(\boldsymbol{x}, \left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}\right) = \textcolor{red}{\sum\limits_{i=1}^{2}} \overline{\boldsymbol{u}}_{\textcolor{red}{i}}(\boldsymbol{x}) ~\prod_{j=1}^{\beta}\lambda_{\textcolor{red}{i}}^j(\mu^j) \]</span></p>
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<div data-id="2">
+<p><span class="math display">\[
+\boldsymbol{u}_{\theta}\left(\boldsymbol{x}, \left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}\right) = \sum\limits_{i=1}^{\textcolor{red}{m}} \overline{\boldsymbol{u}}_i(\boldsymbol{x}) ~\prod_{j=1}^{\beta}\lambda_i^j(\mu^j) \]</span></p>
+</div>
+</div>
+</div>
+<style>
+.add-space{
+padding-right: 10%;
+}
+</style>
+<div style="margin-top: -1em;">
+
+</div>
+<div class="columns">
+<div class="column add-space" style="width:40%;">
+<p><strong>Greedy algorithm</strong></p>
+<div class="fragment fade-in" data-fragment-index="1">
+<ol type="1">
+<li>Start with a single mode</li>
+<li>Minimise the loss until stagnation</li>
+</ol>
+</div>
+<div class="fragment fade-in" data-fragment-index="2">
+<ol start="3" type="1">
+<li>Add a new mode</li>
+<li>If loss decreases, continue training</li>
+</ol>
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<ol start="5" type="1">
+<li>Else stop and return the converged model</li>
+</ol>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment fade-in" data-fragment-index="4">
+<div class="mybox">
+<div class="mybox-header">
+<p>The PGD is</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>An <em>a priori</em> ROM techniques
+<ul>
+<li>Building the model <strong>from scratch</strong> on the fly</li>
+</ul></li>
+<li>No full-order computations</li>
+<li>Reduced-order basis tailored to the specifics of the problem <span class="citation" data-cites="daby-seesaramHybridFrequencytemporalReducedorder2023">(<a href="#/references" role="doc-biblioref" onclick="">Daby-Seesaram et al., 2023</a>)</span></li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+<div class="fragment fade-in" data-fragment-index="5">
+<div class="mybox">
+<div class="mybox-header">
+<p>Note - from fixed point to energy landscape exploration</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Classical PGD: <strong>fixed point</strong> on the <span class="math inline">\(m\)</span>-th mode <span class="math inline">\(\rightarrow\)</span> NN-PGD: <span class="math inline">\(\min\limits_{\boldsymbol{\theta}} \mathcal{L}\left(\boldsymbol{\theta}\right)\)</span> on the <strong>full</strong> decomposition, explored by <strong>automatic differentiation</strong></li>
+<li>The formulation <strong>shapes the landscape</strong>: (ortho)-normalisation, choice of decomposition, preconditioning</li>
+<li>Online stage: a <strong>simple evaluation</strong> of the tensor decomposition</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="neural-network-pgd" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Neural Network PGD</h2>
+<p>Graphical implementation of Neural Network PGD</p>
+<div class="r-stack">
+<div data-id="2">
+<p><span class="math display">\[            \boldsymbol{u}_{\theta}\left(\textcolor{Blue}{\boldsymbol{x}}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right) = \sum\limits_{i=1}^m \textcolor{Blue}{\overline{\boldsymbol{u}}_i(\boldsymbol{x})} ~\textcolor{LGreen}{\prod_{j=1}^{\beta}\lambda_i^j(\mu^j)} \]</span></p>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:65%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Interpretable NN-PGD</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>No black box
+<ul>
+<li>Fully interpretable implementation</li>
+<li>Great transfer learning capabilities</li>
+</ul></li>
+<li>Straightforward implementation
+<ul>
+<li>Benefiting from current ML developments</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="1">
+<ul>
+<li>Straightforward definition of the physical loss using auto-differentiation
+<ul>
+<li><strong>No linearisation by hand</strong>, even for non-linear materials and follower loads</li>
+</ul></li>
+</ul>
+<div id="1d6fc982" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb1-1" class="hljs-ln-code"><a></a><span class="kw">def</span> Loss(model,x,detJ,mu):</span>
+<span id="cb1-2" class="hljs-ln-code"><a></a>  </span>
+<span id="cb1-3" class="hljs-ln-code"><a></a>    u <span class="op">=</span> model.space_mode(x)</span>
+<span id="cb1-4" class="hljs-ln-code"><a></a>    eps <span class="op">=</span> torch.autograd.grad(u, x, grad_outputs<span class="op">=</span>torch.ones_like(u))</span>
+<span id="cb1-5" class="hljs-ln-code"><a></a>    lmbda <span class="op">=</span> model.parameter_mode(mu)</span>
+<span id="cb1-6" class="hljs-ln-code"><a></a>    W_int <span class="op">=</span> torch.einsum(<span class="st">'ij,ejm,eil,em,mp...,lp...,p-&gt;'</span>,C,eps,eps,detJ,lmbda,lmbda, mu)</span>
+<span id="cb1-7" class="hljs-ln-code"><a></a></span>
+<span id="cb1-8" class="hljs-ln-code"><a></a>    <span class="cf">return</span> <span class="fl">0.5</span><span class="op">*</span>W_int<span class="op">/</span>mu.shape[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div><div class="column" style="width:35%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Neurom_architecture.svg" height="330"></p>
+<figcaption>NN-PGD</figcaption>
+</figure>
+</div>
+<div class="fragment" style="font-size: 0.8em;">
+<ul>
+<li><span style="color: rgb(58, 70, 245);"><strong>Space</strong>: sparse NN, mesh connectivity, interpretable weights</span></li>
+<li><span style="color: rgb(62, 128, 102);"><strong>Parameters</strong>: low-rank, <span class="math inline">\(10^{12} \to 10^{6}\)</span> values, frugal operators</span></li>
+</ul>
+</div>
+</div></div>
+</section>
+<section id="non-linear-lung-digital-twin" class="slide level2">
+<h2>Non-linear lung digital twin</h2>
+<div class="columns">
+<div class="column" style="width:42%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Schemes/lung_pressure_zoomed.svg" class="quarto-figure quarto-figure-center" style="width:70.0%"></p>
+</figure>
+</div>
+<p><span class="math display">\[
+\begin{aligned}
+\Pi = &amp; \int_{\Omega_0} \Psi_{\text{SVK}}\left(\boldsymbol{E}\right) \mathrm{d}V - \int_{\Omega_0} \boldsymbol{f}\left(\theta, \phi\right) \cdot \boldsymbol{u} \, \mathrm{d}V \\
+&amp; + \frac{1}{2}\int_{\partial \Omega_0} k_b \left( \boldsymbol{u}\cdot \boldsymbol{N} \right)^2 \mathrm{d}S - \int_{\Omega_0} p\left(\boldsymbol{X} + \boldsymbol{u}\right) J \, \mathrm{d}V
+\end{aligned}
+\]</span></p>
+<ul>
+<li><strong>6 parameters</strong>: <span class="math inline">\(E\)</span>, <span class="math inline">\(\left(\theta, \phi\right)\)</span>, <span class="math inline">\(\left(p_0, H, K\right)\)</span></li>
+<li>Follower pressure <span class="math inline">\(p = p_0 + H\left(z-z_0 \right) + K\left(y-y_0 \right)\)</span>
+<ul>
+<li><span class="math inline">\(\delta \Pi_p = - \int_{\partial \Omega_0} p \, J \boldsymbol{F}^{-T} \boldsymbol{N} \cdot \delta \boldsymbol{u} \, \mathrm{d}S\)</span></li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:58%;">
+<iframe width="100%" height="580" src="Resources/AR/Breathing_ROM_SVK.html" style="border:0" allow="fullscreen" allowfullscreen="">
+</iframe>
+</div></div>
+</section>
+<section id="convergence-of-the-greedy-algorithm" class="slide level2">
+<h2>Convergence of the greedy algorithm</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div id="cell-GreedyconvergenceSVK" class="cell" data-execution_count="2">
+<div id="greedyconvergencesvk" class="cell-output cell-output-display">
+<div>                            <div id="b0283c3d-66c8-4586-891e-62e201749e9f" class="plotly-graph-div" style="height:400px; width:560px;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("b0283c3d-66c8-4586-891e-62e201749e9f")) {                    Plotly.newPlot(                        "b0283c3d-66c8-4586-891e-62e201749e9f",                        [{"line":{"color":"#170f38"},"mode":"lines","name":"Loss gap","x":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78],"y":[0.6847563218390805,0.4136697318007663,0.4136697318007663,0.4136697318007663,0.3005992337164752,0.2903371647509578,0.2902302681992338,0.2902302681992338,0.2902302681992338,0.1654143678160919,0.1654120689655173,0.1654120689655173,0.1654120689655173,0.14525,0.1452494252873563,0.1452494252873563,0.0322948275862069,0.0322942528735632,0.0322942528735632,0.0072609195402299,0.00725938697318,0.00725938697318,0.00725938697318,0.006138122605364,0.0057390804597702,0.0057354406130268,0.0057354406130268,0.0057354406130268,0.0051260536398467,0.0050084291187739,0.0050011494252873,0.0050011494252873,0.0050011494252873,0.0048588122605364,0.004854214559387,0.0048540229885057,0.0039565134099617,0.0033521072796935,0.0033333333333333,0.0033329501915708,0.0033298850574713,0.0033291187739463,0.0033291187739463,0.0031509578544062,0.0031233716475096,0.0030570881226054,0.003030459770115,0.0030279693486591,0.0030268199233716,0.0030266283524905,0.0030266283524905,0.0028630268199234,0.0028496168582375,0.002847509578544,0.0028473180076629,0.0028473180076629,0.0021534482758621,0.0018599616858237,0.0018563218390805,0.0018547892720306,0.001852490421456,0.0018515325670498,0.0018513409961685,0.0017572796934866,0.0017260536398467,0.0017197318007663,0.001715325670498,0.0017134099616858,0.0017134099616858,0.0017132183908046,0.0016568965517242,0.0016323754789272,0.0016078544061303,0.0015990421455939,0.0015967432950192,0.001595785440613,0.0015948275862068,0.0015944444444444,0.0015942528735633],"yaxis":"y","type":"scatter"},{"line":{"color":"#3a46f5","shape":"hv"},"mode":"lines","name":"Modes","visible":"legendonly","x":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78],"y":[1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,5,5,5,6,6,6,6,7,7,7,7,7,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,11,11,11,11,11,12,12,12,12,12,12,12,13,13,13,13,13,13,13,14,14,14,14,14,14,14,14,14],"yaxis":"y2","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"title":{"text":"Iterations (L-BFGS)"},"showgrid":true,"gridcolor":"lightgray"},"yaxis":{"title":{"font":{"color":"#170f38"},"text":"Relative loss gap"},"tickfont":{"color":"#170f38"},"type":"log","tickvals":[0.001,0.01,0.1,1],"ticktext":["10\u207b\u00b3","10\u207b\u00b2","10\u207b\u00b9","1"],"showgrid":true,"gridcolor":"lightgray"},"yaxis2":{"title":{"text":"Modes","font":{"color":"#3a46f5"}},"overlaying":"y","side":"right","range":[0,15],"tickvals":[1,2,4,6,8,10,12,14],"tickfont":{"color":"#3a46f5"}},"legend":{"x":1.12,"y":0.9},"plot_bgcolor":"rgba(0,0,0,0)","width":560,"height":400},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('b0283c3d-66c8-4586-891e-62e201749e9f');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+<p>Loss convergence</p>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<div style="margin-top: 6em;">
+<table class="caption-top">
+<caption>Relative <span class="math inline">\(L^2\)</span> error w.r.t. FEniCS (SVK)</caption>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(E\)</span> (kPa)</th>
+<th><span class="math inline">\(p_0\)</span> (kPa)</th>
+<th>NN-PGD</th>
+<th>Linear FEM</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>7.50</td>
+<td>0.55</td>
+<td><span class="math inline">\(2.2 \times 10^{-2}\)</span></td>
+<td><span class="math inline">\(1.8 \times 10^{-1}\)</span></td>
+</tr>
+<tr class="even">
+<td>5.65</td>
+<td>0.22</td>
+<td><span class="math inline">\(2.9 \times 10^{-2}\)</span></td>
+<td><span class="math inline">\(2.0 \times 10^{-1}\)</span></td>
+</tr>
+<tr class="odd">
+<td>8.03</td>
+<td>0.94</td>
+<td><span class="math inline">\(3.5 \times 10^{-2}\)</span></td>
+<td><span class="math inline">\(2.4 \times 10^{-1}\)</span></td>
+</tr>
+<tr class="even">
+<td>6.50</td>
+<td>0.21</td>
+<td><span class="math inline">\(1.1 \times 10^{-2}\)</span></td>
+<td><span class="math inline">\(4.2 \times 10^{-2}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<div class="mybox">
+<div class="mybox-header">
+<p>Geedy algorithm</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Each mode give more room to decrease the energy</li>
+<li>Here, 14 modes give few percent of error</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="multi-level-training" class="slide level2">
+<h2>Multi-level training</h2>
+<p><span class="math display">\[
+\boldsymbol{u}^{(\ell)}\left(\textcolor{Blue}{\boldsymbol{x}}, \textcolor{LGreen}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right) = \sum\limits_{i=1}^m \textcolor{Blue}{\Big(\sum\limits_{k} N_k^{(\ell)}(\boldsymbol{x})\, \overline{\boldsymbol{u}}_{i,k}^{(\ell)}\Big)} ~\textcolor{LGreen}{\prod_{j=1}^{\beta}\lambda_i^j(\mu^j)}
+\]</span></p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Multi_level_3D_convergenceCurve.svg" width="430"></p>
+<figcaption>Multi-level training convergence</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="mybox" style="font-size: 0.85em;">
+<div class="mybox-header">
+<p>Level <span class="math inline">\(\ell \rightarrow \ell+1\)</span></p>
+</div>
+<div class="mybox-body">
+<ul>
+<li><strong>Interpretable</strong> weights <span class="math inline">\(=\)</span> nodal values
+<ul>
+<li>Direct initialisation of the new <span class="math inline">\(\textcolor{Blue}{\boldsymbol{\theta}}\)</span> <span class="math display">\[\overline{\boldsymbol{u}}_{i,k}^{(\ell+1)} = \sum\limits_{p} N_p^{(\ell)}\left(\boldsymbol{x}_k^{(\ell+1)}\right) \overline{\boldsymbol{u}}_{i,p}^{(\ell)}\]</span></li>
+<li><span class="math inline">\(\textcolor{LGreen}{\lambda_i^j}\)</span> kept as is</li>
+</ul></li>
+<li><strong>Coarse</strong> (cheap) training, then <strong>fine tuning</strong> of all modes</li>
+<li>Extends <span class="citation" data-cites="giacomaOptimalPrioriReduced2015">(<a href="#/references" role="doc-biblioref" onclick="">Giacoma et al., 2015</a>)</span></li>
+</ul>
+</div>
+</div>
+</div></div>
+<div class="mybox" style="font-size: 0.85em;">
+<div class="mybox-header-bis">
+<p>Note</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Tensor decomposition structure kept across levels</li>
+<li>Last mode of each level irrelevant by construction: removed before refinement</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="conclusion" class="slide level2">
+<h2>Conclusion</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Conclusion</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Robust and straightforward general implementation of a <strong>autodiff-PGD</strong>
+<ul>
+<li>Interpretable &amp; sparse</li>
+<li>Benefits from all recent developments in machine learning</li>
+</ul></li>
+<li>Surrogate modelling of parametrised PDE solution
+<ul>
+<li>Promising results on a non-linear (SVK) lung with 6 parameters</li>
+</ul></li>
+</ul>
+<div style="margin-top: 2.1em;">
+
+</div>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Perspectives for patient-specific applications</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Personalised shape-informed digital-twins
+<ul>
+<li><strong>Katerina Skardova</strong> Monday at 6:00 pm</li>
+</ul></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><video data-src="Figures/Movies/Lung_gravity_qua.mov" class="absolute" style="height: 130px; " loop="true" autoplay="true" controls=""><a href="Figures/Movies/Lung_gravity_qua.mov">Video</a></video></p>
+</div><div class="column" style="width:4%;">
+<div style="margin-top: 3em;">
+
+</div>
+<h3 id="section">+</h3>
+<div style="margin-top: 4em;">
+
+</div>
+</div><div class="column" style="width:45%;">
+<p><video data-src="Figures/Movies/Reduced+Full_kinematics.mp4" class="absolute" style="height: 130px; " loop="true" autoplay="true" controls=""><a href="Figures/Movies/Reduced+Full_kinematics.mp4">Video</a></video></p>
+</div></div>
+</div>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Prospective applications</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Digital twin for
+<ul>
+<li>real-time patient-specific simulations
+<ul>
+<li>Diagnostics and prognostics</li>
+<li>Control of medical devices (forced ventilation, etc)</li>
+</ul></li>
+<li>shape-optimisation (of 3D printed organs, personalised prosthesis, etc.)
+<ul>
+<li>Inexpensive shape derivative of mechanical quantities</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><iconify-icon role="img" inline="" icon="fa-solid:newspaper" aria-label="Icon newspaper from fa-solid Iconify.design set." title="Icon newspaper from fa-solid Iconify.design set."></iconify-icon> &nbsp; <strong>Papers</strong>: <span class="citation" data-cites="skardovaFiniteElementNeural2025 daby-seesaramFiniteElementNeural2025">(<a href="#/references" role="doc-biblioref" onclick="">Daby-Seesaram et al., 2025</a>; <a href="#/references" role="doc-biblioref" onclick="">Škardová et al., 2025</a>)</span></p>
+<div style="margin-top: -1em;">
+
+</div>
+<div class="columns">
+<div class="column" style="width:49%;">
+<p><img data-src="https://alexandredabyseesaram.github.io/Resources/Images/NeuROM_ter.svg" style="width:100.0%" alt="image"> <a href="https://pypi.org/project/NeuROM-Py/"><img data-src="https://img.shields.io/pypi/dm/NeuROM-Py.svg?label=PyPI%20downloads" alt="PyPI Downloads"></a></p>
+</div><div class="column" style="width:49%;">
+<div style="margin-top: 1em;">
+
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img data-src="Figures/QR_code.svg"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><a href="https://alexandredabyseesaram.github.io/">Github page</a></td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</div></div>
+</section>
+<section id="thank-you-for-your-attention" class="slide level2">
+<h2>Thank you for your attention</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Breno.jpeg" class="quarto-figure quarto-figure-center" height="480"></p>
+</figure>
+</div>
+</section>
+<section id="shape-model---from-an-average-shape" class="slide level2" data-visibility="uncounted">
+<h2>Shape model - from an average shape</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Schemes/AverageShape.svg" class="quarto-figure quarto-figure-center" style="width:85.0%"></p>
+</figure>
+</div>
+<div style="margin-top: -2.5em;">
+
+</div>
+<ul>
+<li><span class="math inline">\(\forall i \in \mathopen{~[\!\![~}1,n\mathclose{~]\!\!]}\)</span>
+<ul>
+<li><span class="math inline">\(\boldsymbol{u}_i, \phi_i\left(\boldsymbol{X}\right)\)</span> mappings and transformations on the sphere</li>
+<li><span class="math inline">\(\overline{\boldsymbol{u}}_i, \overline{\phi}_i\left(\overline{\boldsymbol{x}}\right)\)</span> mappings and transformations on the average shape</li>
+</ul></li>
+<li><span class="math inline">\(\overline{\Omega}\)</span> The average shape
+<ul>
+<li><span class="math inline">\(\overline{\boldsymbol{u}}, \overline{\phi}\left(\overline{\boldsymbol{x}}\right)\)</span> mappings and transformations from sphere to AS</li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Kinematics on the average shape <span class="math inline">\(\overline{\Omega}\)</span></li>
+</ul>
+<div data-id="2">
+<p><span class="math display">\[
+\begin{align}
+\underbrace{\boldsymbol{1} + \boldsymbol{\nabla}_{\overline{\boldsymbol{x}}} \overline{\boldsymbol{u}}_i\left(\overline{\boldsymbol{x}}\right)}_{\boldsymbol{\overline{F}}_i} &amp; = \boldsymbol{1} + \boldsymbol{\nabla}_X \left( \boldsymbol{u}_i\left(\boldsymbol{X}\right) - \overline{\boldsymbol{u}}\left(\boldsymbol{X}\right) \right) \boldsymbol{\overline{F}}^{-1} \\
+&amp; = \boldsymbol{F}_i \boldsymbol{\overline{F}}^{-1} \\
+\end{align}\]</span></p>
+</div>
+<ul>
+<li>From there we can compute <span class="math display">\[\overline{\Omega} = \text{argmin} \sum\limits_{i=1}^n \int_{\overline{\Omega}} W\left( \boldsymbol{\overline{F}}_i\right)\]</span></li>
+<li>And then we parametrise the residual mappings <span class="math display">\[\overline{u}_i = \overline{u}_i\left(\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}\right) := u_i - \overline{u}\]</span></li>
+</ul>
+</div></div>
+</section>
+<section id="preliminary-results-on-varying-porosity" class="slide level2" data-visibility="uncounted">
+<h2>Preliminary results on varying porosity</h2>
+<p>Varying porosity value changing the geometry of the local RVE.</p>
+<div class="columns">
+<div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Poro_results/ref_poro.png" style="width:45.0%"></p>
+<figcaption>Reference problem</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:32%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Poro_results/Poro1.png" style="width:25.0%"></p>
+<figcaption>h=0.1</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:32%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Poro_results/Poro2.png" style="width:25.0%"></p>
+<figcaption>h=0.15</figcaption>
+</figure>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Poro_results/shape_poro.png" style="width:45.0%"></p>
+<figcaption>Shapes definition</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:32%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Poro_results/Poro3.png" style="width:25.0%"></p>
+<figcaption>h=0.2</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:32%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Figures/Poro_results/Poro4.png" style="width:25.0%"></p>
+<figcaption>h=0.3</figcaption>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="references" class="slide level2 smaller scrollable">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-barraultEmpiricalInterpolationMethod2004" class="csl-entry" role="listitem">
+Barrault, M., Maday, Y., Nguyen, N. C., &amp; Patera, A. T. (2004). An <span>“empirical interpolation”</span> method: Application to efficient reduced-basis discretization of partial differential equations. <em>Comptes Rendus Mathematique</em>, <em>339</em>(9), 667–672. <a href="https://doi.org/10.1016/j.crma.2004.08.006">https://doi.org/10.1016/j.crma.2004.08.006</a>
+</div>
+<div id="ref-chatterjeeIntroductionProperOrthogonal2000" class="csl-entry" role="listitem">
+Chatterjee, A. (2000). An introduction to the proper orthogonal decomposition. <em>Current Science</em>, <em>78</em>(7), 808–817. <a href="https://www.jstor.org/stable/24103957">https://www.jstor.org/stable/24103957</a>
+</div>
+<div id="ref-chinestaShortReviewModel2011" class="csl-entry" role="listitem">
+Chinesta, F., Ladeveze, P., &amp; Cueto, E. (2011). A <span>Short Review</span> on <span>Model Order Reduction Based</span> on <span>Proper Generalized Decomposition</span>. <em>Archives of Computational Methods in Engineering</em>, <em>18</em>(4), 395–404. <a href="https://doi.org/10.1007/s11831-011-9064-7">https://doi.org/10.1007/s11831-011-9064-7</a>
+</div>
+<div id="ref-daby-seesaramHybridFrequencytemporalReducedorder2023" class="csl-entry" role="listitem">
+Daby-Seesaram, A., Fau, A., Charbonnel, P.-É., &amp; Néron, D. (2023). A hybrid frequency-temporal reduced-order method for nonlinear dynamics. <em>Nonlinear Dynamics</em>, <em>111</em>(15), 13669–13689. <a href="https://doi.org/10.1007/s11071-023-08513-8">https://doi.org/10.1007/s11071-023-08513-8</a>
+</div>
+<div id="ref-daby-seesaramFiniteElementNeural2025" class="csl-entry" role="listitem">
+Daby-Seesaram, A., Škardová, K., &amp; Genet, M. (2025). Finite element neural network interpolation: <span>Part II</span>—hybridisation with the proper generalised decomposition for non-linear surrogate modelling. <em>Computational Mechanics</em>. <a href="https://doi.org/10.1007/s00466-025-02676-4">https://doi.org/10.1007/s00466-025-02676-4</a>
+</div>
+<div id="ref-ganglFullySemiautomatedShape2021" class="csl-entry" role="listitem">
+Gangl, P., Sturm, K., Neunteufel, M., &amp; Schöberl, J. (2021). Fully and semi-automated shape differentiation in <span>NGSolve</span>. <em>Structural and Multidisciplinary Optimization</em>, <em>63</em>(3), 1579–1607. <a href="https://doi.org/10.1007/s00158-020-02742-w">https://doi.org/10.1007/s00158-020-02742-w</a>
+</div>
+<div id="ref-giacomaOptimalPrioriReduced2015" class="csl-entry" role="listitem">
+Giacoma, A., Dureisseix, D., Gravouil, A., &amp; Rochette, M. (2015). Toward an optimal a priori reduced basis strategy for frictional contact problems with <span>LATIN</span> solver. <em>Computer Methods in Applied Mechanics and Engineering</em>, <em>283</em>, 1357–1381. <a href="https://doi.org/10.1016/j.cma.2014.09.005">https://doi.org/10.1016/j.cma.2014.09.005</a>
+</div>
+<div id="ref-hansteenAccuracyModeSuperposition1979" class="csl-entry" role="listitem">
+Hansteen, O. E., &amp; Bell, K. (1979). On the accuracy of mode superposition analysis in structural dynamics. <em>Earthquake Engineering &amp; Structural Dynamics</em>, <em>7</em>(5), 405–411. <a href="https://doi.org/10.1002/eqe.4290070502">https://doi.org/10.1002/eqe.4290070502</a>
+</div>
+<div id="ref-ladevezeFamilleDalgorithmesMecanique1985" class="csl-entry" role="listitem">
+Ladeveze, P. (1985). Sur une famille d’algorithmes en mécanique des structures. <em>Sur Une Famille d’algorithmes En Mécanique Des Structures</em>, <em>300</em>(2), 41–44.
+</div>
+<div id="ref-lavilleComparisonOptimizationParametrizations2023" class="csl-entry" role="listitem">
+Laville, C., Fetita, C., Gille, T., Brillet, P.-Y., Nunes, H., Bernaudin, J.-F., &amp; Genet, M. (2023). Comparison of optimization parametrizations for regional lung compliance estimation using personalized pulmonary poromechanical modeling. <em>Biomechanics and Modeling in Mechanobiology</em>, <em>22</em>(5), 1541–1554. <a href="https://doi.org/10.1007/s10237-023-01691-9">https://doi.org/10.1007/s10237-023-01691-9</a>
+</div>
+<div id="ref-liuHiDeNNFEMSeamlessMachine2023" class="csl-entry" role="listitem">
+Liu, Y., Park, C., Lu, Y., Mojumder, S., Liu, W. K., &amp; Qian, D. (2023). <span>HiDeNN-FEM</span>: A seamless machine learning approach to nonlinear finite element analysis. <em>Computational Mechanics</em>, <em>72</em>(1), 173–194. <a href="https://doi.org/10.1007/s00466-023-02293-z">https://doi.org/10.1007/s00466-023-02293-z</a>
+</div>
+<div id="ref-madayReducedBasisElementMethod2002" class="csl-entry" role="listitem">
+Maday, Y., &amp; Rønquist, E. M. (2002). A <span>Reduced-Basis Element Method</span>. <em>Journal of Scientific Computing</em>, <em>17</em>(1), 447–459. <a href="https://doi.org/10.1023/A:1015197908587">https://doi.org/10.1023/A:1015197908587</a>
+</div>
+<div id="ref-neubergerSteepestDescentDifferential1985" class="csl-entry" role="listitem">
+Neuberger, J. W. (1985). Steepest descent and differential equations. <em>Journal of the Mathematical Society of Japan</em>, <em>37</em>(2), 187–195. <a href="https://doi.org/10.2969/jmsj/03720187">https://doi.org/10.2969/jmsj/03720187</a>
+</div>
+<div id="ref-neubergerSobolevGradientsDifferential1997" class="csl-entry" role="listitem">
+Neuberger, J. W. (1997). <em>Sobolev <span>Gradients</span> and <span>Differential Equations</span></em> (Vol. 1670). Springer. <a href="https://doi.org/10.1007/BFb0092831">https://doi.org/10.1007/BFb0092831</a>
+</div>
+<div id="ref-nouyPrioriModelReduction2010" class="csl-entry" role="listitem">
+Nouy, A. (2010). A priori model reduction through <span>Proper Generalized Decomposition</span> for solving time-dependent partial differential equations. <em>Computer Methods in Applied Mechanics and Engineering</em>, <em>199</em>(23-24), 1603–1626. <a href="https://doi.org/10.1016/j.cma.2010.01.009">https://doi.org/10.1016/j.cma.2010.01.009</a>
+</div>
+<div id="ref-parkConvolutionHierarchicalDeeplearning2023" class="csl-entry" role="listitem">
+Park, C., Lu, Y., Saha, S., Xue, T., Guo, J., Mojumder, S., Apley, D. W., Wagner, G. J., &amp; Liu, W. K. (2023). Convolution hierarchical deep-learning neural network (<span>C-HiDeNN</span>) with graphics processing unit (<span>GPU</span>) acceleration. <em>Computational Mechanics</em>, <em>72</em>(2), 383–409. <a href="https://doi.org/10.1007/s00466-023-02329-4">https://doi.org/10.1007/s00466-023-02329-4</a>
+</div>
+<div id="ref-patteQuasistaticPoromechanicalModel2022" class="csl-entry" role="listitem">
+Patte, C., Genet, M., &amp; Chapelle, D. (2022). A quasi-static poromechanical model of the lungs. <em>Biomechanics and Modeling in Mechanobiology</em>, <em>21</em>(2), 527–551. <a href="https://doi.org/10.1007/s10237-021-01547-0">https://doi.org/10.1007/s10237-021-01547-0</a>
+</div>
+<div id="ref-peyrautQuantificationDincertitudesPour2024a" class="csl-entry" role="listitem">
+Peyraut, A., &amp; Genet, M. (2024). <em><span>Quantification d’incertitudes pour la modélisation pulmonaire per- sonnalisée</span></em>.
+</div>
+<div id="ref-zotero-2069" class="csl-entry" role="listitem">
+Peyraut, A., &amp; Genet, M. (2025). Uncertainty quantification for personalized biomechanical modeling: <span>Application</span> to pulmonary poromechanical digital twins. <em>Journal of Biomechanical Engineering</em>.
+</div>
+<div id="ref-radermacherComparisonProjectionbasedModel2013" class="csl-entry" role="listitem">
+Radermacher, A., &amp; Reese, S. (2013). A comparison of projection-based model reduction concepts in the context of nonlinear biomechanics. <em>Archive of Applied Mechanics</em>, <em>83</em>(8), 1193–1213. <a href="https://doi.org/10.1007/s00419-013-0742-9">https://doi.org/10.1007/s00419-013-0742-9</a>
+</div>
+<div id="ref-skardovaFiniteElementNeural2025" class="csl-entry" role="listitem">
+Škardová, K., Daby-Seesaram, A., &amp; Genet, M. (2025). Finite element neural network interpolation: <span>Part I</span>—interpretable and adaptive discretization for solving <span>PDEs</span>. <em>Computational Mechanics</em>. <a href="https://doi.org/10.1007/s00466-025-02677-3">https://doi.org/10.1007/s00466-025-02677-3</a>
+</div>
+<div id="ref-tomasettoLatentFeedbackControl2025" class="csl-entry" role="listitem">
+Tomasetto, M., Braghin, F., &amp; Manzoni, A. (2025). Latent feedback control of distributed systems in multiple scenarios through deep learning-based reduced order models. <em>Computer Methods in Applied Mechanics and Engineering</em>, <em>442</em>, 118030. <a href="https://doi.org/10.1016/j.cma.2025.118030">https://doi.org/10.1016/j.cma.2025.118030</a>
+</div>
+<div id="ref-zhangHierarchicalDeeplearningNeural2021" class="csl-entry" role="listitem">
+Zhang, L., Cheng, L., Li, H., Gao, J., Yu, C., Domel, R., Yang, Y., Tang, S., &amp; Liu, W. K. (2021). Hierarchical deep-learning neural networks: Finite elements and beyond. <em>Computational Mechanics</em>, <em>67</em>(1), 207–230. <a href="https://doi.org/10.1007/s00466-020-01928-9">https://doi.org/10.1007/s00466-020-01928-9</a>
+</div>
+</div>
+</section></section>
+<section>
+<section id="ii---patient-specific-parametrisation" class="title-slide slide level1 part-slide center" data-visibility="uncounted">
+<h1>II - Patient-specific parametrisation</h1>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div style="margin-top: 10em;">
+
+</div>
+<table class="caption-top">
+<colgroup>
+<col style="width: 101%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><ol type="1">
+<li><strong>Shape registration pipeline from CT-scans</strong></li>
+</ol></td>
+</tr>
+<tr class="even">
+<td><ol start="2" type="1">
+<li><strong>Building a geometry model from the shapes library</strong></li>
+</ol></td>
+</tr>
+</tbody>
+</table>
+<div style="margin-top: 1em;">
+
+</div>
+<div class="quarto-figure quarto-figure-left">
+<figure>
+<p><img data-src="Figures/QR_code.svg" style="width:15.0%"></p>
+<figcaption>AR model</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<div style="margin-top: 4em;">
+
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><video data-src="Figures/Movies/AR_lungs.mp4" class="quarto-figure quarto-figure-center" loop="true" autoplay="true" height="300" controls=""><a href="Figures/Movies/AR_lungs.mp4">Video</a></video></p>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="parametrisation-of-high-dimensional-quantities" class="slide level2" data-visibility="uncounted">
+<h2>Parametrisation of high-dimensional quantities</h2>
+<ul>
+<li>Most relevant patient specific quantities <em>a priori</em> lives in high dimension and are not parametrised
+<ul>
+<li>A parametrisation step is required to use a relatively small number of patient-specific parameters</li>
+</ul></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Fibrosed-healthy clustering</strong></p>
+<div class="quarto-figure quarto-figure-left">
+<figure>
+<p><img data-src="Figures/fibrosed.png" style="width:85.0%"></p>
+<figcaption>Fibrosed zones <span class="citation" data-cites="peyrautQuantificationDincertitudesPour2024a">(<a href="#/references" role="doc-biblioref" onclick="">Peyraut &amp; Genet, 2024</a>)</span></figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>Shapes</strong></p>
+<div class="columns">
+<div class="column" style="width:49%;">
+<p><img data-src="Figures/shapes/P1.png" style="width:80.0%"></p>
+</div><div class="column" style="width:49%;">
+<p><img data-src="Figures/shapes/P15.png" style="width:80.0%"></p>
+</div></div>
+<div style="margin-top: -3em;">
+
+</div>
+<div class="columns">
+<div class="column" style="width:49%;">
+<p><img data-src="Figures/shapes/P35.png" style="width:80.0%"></p>
+</div><div class="column" style="width:49%;">
+<p><img data-src="Figures/shapes/P4.png" style="width:80.0%"></p>
+</div></div>
+</div></div>
+</section>
+<section id="shape-model---registration-ganglfullysemiautomatedshape2021." class="slide level2 custom-h2-links" data-visibility="uncounted">
+<h2>Shape model - registration <span class="citation" data-cites="ganglFullySemiautomatedShape2021">(<a href="#/references" role="doc-biblioref" onclick="">Gangl et al., 2021</a>)</span>.</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="mybox">
+<div class="mybox-header">
+<p>Computing the mappings</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>The objective is to find the domain <span class="math inline">\(\omega\)</span> occupied by a given segmented shape in a 3D image</li>
+<li>Which is solution of</li>
+</ul>
+<p><span class="math display">\[\omega = \arg \min\underbrace{ \int_{\omega} I\left( x \right) \mathrm{d}\omega}_{\Psi\left(\omega\right)}\]</span></p>
+<p><strong>With requirement</strong> that <span class="math inline">\(I\left( x \right) \begin{cases} &lt; 0 \forall x \in \mathcal{S} \\ &gt; 0 \forall x \not \in \mathcal{S} \end{cases}\)</span>, with <span class="math inline">\(\mathcal{S}\)</span> the image footprint of the shape to be registered</p>
+</div>
+</div>
+<p>The domain <span class="math inline">\(\omega\)</span> can be described by mapping <span class="math display">\[\Phi\left(X\right) = I_d + u\left(X\right)\]</span> from a reference shape <span class="math inline">\(\Omega\)</span>, leading to <span class="math display">\[\int_{\omega} I\left( x \right) \mathrm{d}\omega = \int_{\Omega} I \circ \Phi \left( X \right) J \mathrm{d}\Omega\]</span></p>
+</div><div class="column" style="width:50%;">
+<div style="margin-top: 1.5em;">
+
+</div>
+<h4 id="shape-derivatives">Shape derivatives</h4>
+<ul>
+<li><span class="math inline">\(D\Psi\left(\omega\right)\left(\boldsymbol{u}^*\right) = \int_{\Omega} \nabla I \cdot u^* J \mathrm{d}\Omega + \underbrace{\int_{\Omega}I \circ \Phi\left(X\right) (F^T)^{-1} : \nabla u^* J \mathrm{d}\Omega}_{\int_{\omega}I\left(x\right) \mathrm{div}\left( u^* \circ \Phi \right) \mathrm{d}\omega}\)</span></li>
+</ul>
+<h4 id="sobolev-gradient-neubergersteepestdescentdifferential1985-neubergersobolevgradientsdifferential1997"><a href="https://citeseerx.ist.psu.edu/document?repid=rep1&amp;type=pdf&amp;doi=8642717af96b1980458efda55830b826a17eb2bd">Sobolev gradient</a> <span class="citation" data-cites="neubergerSteepestDescentDifferential1985 neubergerSobolevGradientsDifferential1997">(<a href="#/references" role="doc-biblioref" onclick="">Neuberger, 1985</a>; <a href="#/references" role="doc-biblioref" onclick="">Neuberger, 1997</a>)</span></h4>
+<p><span class="math display">\[D\Psi\left(u\right)\left(v^*\right) = \left(\nabla^H \Psi \left(u\right), v^* \right)_H\]</span></p>
+<ul>
+<li>Classically:
+<ul>
+<li><span class="math inline">\(\left(\boldsymbol{u}, \boldsymbol{v}^* \right)_H := \int_{\omega} \boldsymbol{\nabla_s}\boldsymbol{u}:\boldsymbol{\nabla_s}\boldsymbol{\boldsymbol{v}^*}\mathrm{d}\omega + \alpha \int_{\omega} \boldsymbol{u} \cdot \boldsymbol{v^*}\mathrm{d}\omega\)</span></li>
+</ul></li>
+</ul>
+<div style="margin-top: 2em;">
+
+</div>
+<div style="border-top: 1px solid #00436d; width: 45%; margin: 0 auto;">
+
+</div>
+<div style="margin-left: 14%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><video data-src="Figures/Movies/Reduced+Full_kinematics.mp4" class="quarto-figure quarto-figure-center" loop="true" autoplay="true" height="300" controls=""><a href="Figures/Movies/Reduced+Full_kinematics.mp4">Video</a></video></p>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section id="shape-model---parametrisation" class="slide level2" data-visibility="uncounted">
+<h2>Shape model - parametrisation</h2>
+<div style="margin-top: -0.5em;">
+
+</div>
+<div class="mybox">
+<div class="mybox-header">
+<p>Encoding the shape of the lung in a low-dimensional space</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>In order to feed the surrogate model we need a parametrisation of the lung</li>
+<li>ROM on the shape mappings library</li>
+</ul>
+</div>
+</div>
+<div style="margin-top: -1em;">
+
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="1">
+<iframe width="100%" height="400" src="https://alexandredabyseesaram.github.io/Resources/AR/3D_lung_AR.html">
+</iframe>
+</div>
+<div class="fragment fade-in" data-fragment-index="1">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="Figures/compiled_grid_lung_mappings_coloured.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Mappings’ library"><img data-src="Figures/compiled_grid_lung_mappings_coloured.png" class="quarto-figure quarto-figure-center" height="400" alt="Mappings’ library"></a></p>
+</figure>
+</div>
+<figcaption>Mappings’ library</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment fade-in-then-out" data-fragment-index="2">
+<div id="e31b15ea" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div>                            <div id="e23c6ee1-422c-4da4-a980-f68c2e965272" class="plotly-graph-div" style="height:355px; width:450px;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("e23c6ee1-422c-4da4-a980-f68c2e965272")) {                    Plotly.newPlot(                        "e23c6ee1-422c-4da4-a980-f68c2e965272",                        [{"marker":{"color":[0.0,0.002004008016032064,0.004008016032064128,0.0060120240480961915,0.008016032064128256,0.01002004008016032,0.012024048096192383,0.014028056112224447,0.01603206412825651,0.018036072144288574,0.02004008016032064,0.022044088176352703,0.024048096192384766,0.026052104208416832,0.028056112224448895,0.03006012024048096,0.03206412825651302,0.03406813627254509,0.03607214428857715,0.038076152304609215,0.04008016032064128,0.04208416833667334,0.044088176352705406,0.04609218436873747,0.04809619238476953,0.0501002004008016,0.052104208416833664,0.05410821643286573,0.05611222444889779,0.058116232464929855,0.06012024048096192,0.06212424849699398,0.06412825651302605,0.06613226452905811,0.06813627254509018,0.07014028056112225,0.0721442885771543,0.07414829659318636,0.07615230460921843,0.0781563126252505,0.08016032064128256,0.08216432865731463,0.08416833667334668,0.08617234468937875,0.08817635270541081,0.09018036072144288,0.09218436873747494,0.09418837675350701,0.09619238476953906,0.09819639278557113,0.1002004008016032,0.10220440881763526,0.10420841683366733,0.1062124248496994,0.10821643286573146,0.11022044088176351,0.11222444889779558,0.11422845691382764,0.11623246492985971,0.11823647294589178,0.12024048096192384,0.1222444889779559,0.12424849699398796,0.12625250501002003,0.1282565130260521,0.13026052104208416,0.13226452905811623,0.1342685370741483,0.13627254509018036,0.13827655310621242,0.1402805611222445,0.14228456913827653,0.1442885771543086,0.14629258517034066,0.14829659318637273,0.1503006012024048,0.15230460921843686,0.15430861723446893,0.156312625250501,0.15831663326653306,0.16032064128256512,0.1623246492985972,0.16432865731462926,0.16633266533066132,0.16833667334669336,0.17034068136272543,0.1723446893787575,0.17434869739478956,0.17635270541082163,0.1783567134268537,0.18036072144288576,0.18236472945891782,0.1843687374749499,0.18637274549098196,0.18837675350701402,0.1903807615230461,0.19238476953907813,0.1943887775551102,0.19639278557114226,0.19839679358717432,0.2004008016032064,0.20240480961923846,0.20440881763527052,0.2064128256513026,0.20841683366733466,0.21042084168336672,0.2124248496993988,0.21442885771543085,0.21643286573146292,0.21843687374749496,0.22044088176352702,0.2224448897795591,0.22444889779559116,0.22645290581162322,0.2284569138276553,0.23046092184368736,0.23246492985971942,0.2344689378757515,0.23647294589178355,0.23847695390781562,0.24048096192384769,0.24248496993987975,0.2444889779559118,0.24649298597194386,0.24849699398797592,0.250501002004008,0.25250501002004005,0.2545090180360721,0.2565130260521042,0.25851703406813625,0.2605210420841683,0.2625250501002004,0.26452905811623245,0.2665330661322645,0.2685370741482966,0.27054108216432865,0.2725450901803607,0.2745490981963928,0.27655310621242485,0.2785571142284569,0.280561122244489,0.282565130260521,0.28456913827655306,0.2865731462925851,0.2885771543086172,0.29058116232464926,0.2925851703406813,0.2945891783567134,0.29659318637274545,0.2985971943887775,0.3006012024048096,0.30260521042084165,0.3046092184368737,0.3066132264529058,0.30861723446893785,0.3106212424849699,0.312625250501002,0.31462925851703405,0.3166332665330661,0.3186372745490982,0.32064128256513025,0.3226452905811623,0.3246492985971944,0.32665330661322645,0.3286573146292585,0.3306613226452906,0.33266533066132264,0.33466933867735466,0.3366733466933867,0.3386773547094188,0.34068136272545085,0.3426853707414829,0.344689378757515,0.34669338677354705,0.3486973947895791,0.3507014028056112,0.35270541082164325,0.3547094188376753,0.3567134268537074,0.35871743486973945,0.3607214428857715,0.3627254509018036,0.36472945891783565,0.3667334669338677,0.3687374749498998,0.37074148296593185,0.3727454909819639,0.374749498997996,0.37675350701402804,0.3787575150300601,0.3807615230460922,0.38276553106212424,0.38476953907815625,0.3867735470941883,0.3887775551102204,0.39078156312625245,0.3927855711422845,0.3947895791583166,0.39679358717434865,0.3987975951903807,0.4008016032064128,0.40280561122244485,0.4048096192384769,0.406813627254509,0.40881763527054105,0.4108216432865731,0.4128256513026052,0.41482965931863724,0.4168336673346693,0.4188376753507014,0.42084168336673344,0.4228456913827655,0.4248496993987976,0.42685370741482964,0.4288577154308617,0.4308617234468938,0.43286573146292584,0.4348697394789579,0.4368737474949899,0.438877755511022,0.44088176352705405,0.4428857715430861,0.4448897795591182,0.44689378757515025,0.4488977955911823,0.4509018036072144,0.45290581162324645,0.4549098196392785,0.4569138276553106,0.45891783567134264,0.4609218436873747,0.4629258517034068,0.46492985971943884,0.4669338677354709,0.468937875751503,0.47094188376753504,0.4729458917835671,0.4749498997995992,0.47695390781563124,0.4789579158316633,0.48096192384769537,0.48296593186372744,0.4849699398797595,0.48697394789579157,0.4889779559118236,0.49098196392785565,0.4929859719438877,0.4949899799599198,0.49699398797595185,0.4989979959919839,0.501002004008016,0.503006012024048,0.5050100200400801,0.5070140280561122,0.5090180360721442,0.5110220440881763,0.5130260521042084,0.5150300601202404,0.5170340681362725,0.5190380761523046,0.5210420841683366,0.5230460921843687,0.5250501002004008,0.5270541082164328,0.5290581162324649,0.531062124248497,0.533066132264529,0.5350701402805611,0.5370741482965932,0.5390781563126252,0.5410821643286573,0.5430861723446894,0.5450901803607214,0.5470941883767535,0.5490981963927856,0.5511022044088176,0.5531062124248497,0.5551102204408818,0.5571142284569138,0.5591182364729459,0.561122244488978,0.56312625250501,0.565130260521042,0.567134268537074,0.5691382765531061,0.5711422845691382,0.5731462925851702,0.5751503006012023,0.5771543086172344,0.5791583166332664,0.5811623246492985,0.5831663326653306,0.5851703406813626,0.5871743486973947,0.5891783567134268,0.5911823647294588,0.5931863727454909,0.595190380761523,0.597194388777555,0.5991983967935871,0.6012024048096192,0.6032064128256512,0.6052104208416833,0.6072144288577154,0.6092184368737474,0.6112224448897795,0.6132264529058116,0.6152304609218436,0.6172344689378757,0.6192384769539078,0.6212424849699398,0.6232464929859719,0.625250501002004,0.627254509018036,0.6292585170340681,0.6312625250501002,0.6332665330661322,0.6352705410821643,0.6372745490981964,0.6392785571142284,0.6412825651302605,0.6432865731462926,0.6452905811623246,0.6472945891783567,0.6492985971943888,0.6513026052104208,0.6533066132264529,0.655310621242485,0.657314629258517,0.6593186372745491,0.6613226452905812,0.6633266533066132,0.6653306613226453,0.6673346693386772,0.6693386773547093,0.6713426853707414,0.6733466933867734,0.6753507014028055,0.6773547094188376,0.6793587174348696,0.6813627254509017,0.6833667334669338,0.6853707414829658,0.6873747494989979,0.68937875751503,0.691382765531062,0.6933867735470941,0.6953907815631262,0.6973947895791582,0.6993987975951903,0.7014028056112224,0.7034068136272544,0.7054108216432865,0.7074148296593186,0.7094188376753506,0.7114228456913827,0.7134268537074148,0.7154308617234468,0.7174348697394789,0.719438877755511,0.721442885771543,0.7234468937875751,0.7254509018036072,0.7274549098196392,0.7294589178356713,0.7314629258517034,0.7334669338677354,0.7354709418837675,0.7374749498997996,0.7394789579158316,0.7414829659318637,0.7434869739478958,0.7454909819639278,0.7474949899799599,0.749498997995992,0.751503006012024,0.7535070140280561,0.7555110220440882,0.7575150300601202,0.7595190380761523,0.7615230460921844,0.7635270541082164,0.7655310621242485,0.7675350701402806,0.7695390781563125,0.7715430861723446,0.7735470941883766,0.7755511022044087,0.7775551102204408,0.7795591182364728,0.7815631262525049,0.783567134268537,0.785571142284569,0.7875751503006011,0.7895791583166332,0.7915831663326652,0.7935871743486973,0.7955911823647294,0.7975951903807614,0.7995991983967935,0.8016032064128256,0.8036072144288576,0.8056112224448897,0.8076152304609218,0.8096192384769538,0.8116232464929859,0.813627254509018,0.81563126252505,0.8176352705410821,0.8196392785571142,0.8216432865731462,0.8236472945891783,0.8256513026052104,0.8276553106212424,0.8296593186372745,0.8316633266533066,0.8336673346693386,0.8356713426853707,0.8376753507014028,0.8396793587174348,0.8416833667334669,0.843687374749499,0.845691382765531,0.8476953907815631,0.8496993987975952,0.8517034068136272,0.8537074148296593,0.8557114228456913,0.8577154308617234,0.8597194388777555,0.8617234468937875,0.8637274549098196,0.8657314629258517,0.8677354709418837,0.8697394789579158,0.8717434869739479,0.8737474949899798,0.8757515030060119,0.877755511022044,0.879759519038076,0.8817635270541081,0.8837675350701402,0.8857715430861722,0.8877755511022043,0.8897795591182364,0.8917835671342684,0.8937875751503005,0.8957915831663326,0.8977955911823646,0.8997995991983967,0.9018036072144288,0.9038076152304608,0.9058116232464929,0.907815631262525,0.909819639278557,0.9118236472945891,0.9138276553106212,0.9158316633266532,0.9178356713426853,0.9198396793587174,0.9218436873747494,0.9238476953907815,0.9258517034068136,0.9278557114228456,0.9298597194388777,0.9318637274549098,0.9338677354709418,0.9358717434869739,0.937875751503006,0.939879759519038,0.9418837675350701,0.9438877755511021,0.9458917835671342,0.9478957915831663,0.9498997995991983,0.9519038076152304,0.9539078156312625,0.9559118236472945,0.9579158316633266,0.9599198396793587,0.9619238476953907,0.9639278557114228,0.9659318637274549,0.9679358717434869,0.969939879759519,0.9719438877755511,0.9739478957915831,0.9759519038076151,0.9779559118236472,0.9799599198396792,0.9819639278557113,0.9839679358717434,0.9859719438877754,0.9879759519038075,0.9899799599198396,0.9919839679358716,0.9939879759519037,0.9959919839679358,0.9979959919839678,1.0],"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"showscale":false,"size":5},"mode":"markers","x":[0.0,0.0020036505805091174,0.004005156802889821,0.0060023755839235735,0.00799316638957489,0.009975392507991381,0.011946922320594883,0.01390563057062865,0.015849399628526887,0.017776120753474258,0.019683695350524805,0.021570036222651717,0.023433068817101766,0.025270732465430743,0.027080981616599255,0.02886178706251131,0.03061113715538167,0.032327039016321654,0.034007519734537084,0.03565062755653651,0.03725443306475218,0.03881703034498139,0.04033653814206081,0.041811101003191596,0.04323889040833933,0.04461810588713817,0.04594697612173507,0.04722376003501648,0.04844674786366645,0.04961426221551207,0.050724659110619644,0.0517763290056121,0.052767697800686096,0.05369722782881529,0.054563418826634166,0.05536480888650555,0.05609997538928341,0.05676753591729159,0.05736614914704793,0.05789451572127305,0.05835137909973224,0.05873552638846863,0.05904578914699621,0.05928104417303093,0.05944021426434875,0.05952226895737011,0.05952622524208083,0.059451148252910736,0.05929615193520181,0.059060399686909786,0.05874310497519376,0.058343531927560664,0.05786099589724267,0.05729486400249798,0.05664455563953747,0.05590954296879123,0.05508935137424287,0.0541835598955701,0.05319180163284439,0.052113764123554084,0.05094918969172894,0.04969787576895675,0.048359675187095524,0.04693449644249872,0.045422303931583106,0.043823118157583385,0.04213701590835018,0.04036413040506227,0.03850465142173696,0.03655882537543638,0.034526955387081525,0.032409401312798805,0.03020657974573855,0.027918963988318186,0.025547083994856962,0.023091526284582917,0.020552933825006583,0.017932005885670337,0.015229497862295481,0.012446221071363839,0.00958304251518419,0.006640884617507947,0.0036207249297723777,0.0005235958080633725,-0.002649415939095627,-0.0058971694320093465,-0.009218470129996796,-0.01261207027035051,-0.016076669335907748,-0.01961091455105877,-0.023213401406004072,-0.02688267420905805,-0.030617226666784673,-0.0344155024917358,-0.0382758960375505,-0.0421967529611604,-0.04617637091183257,-0.05021300024676958,-0.0543048447729717,-0.058450062515055856,-0.06264676650871115,-0.06689302561945984,-0.07118686538637932,-0.07552626889042935,-0.07990917764701576,-0.08433349252241117,-0.08879707467363994,-0.09329774651142457,-0.09783329268577942,-0.10240146109382312,-0.10699996390937594,-0.11162647863389145,-0.11627864916826527,-0.12095408690505119,-0.12565037184060546,-0.1303650537066697,-0.1350956531208928,-0.13983966275578347,-0.14459454852557402,-0.14935775079046848,-0.15412668557773798,-0.1588987458191177,-0.1636713026039523,-0.16844170644752604,-0.17320728857400883,-0.177965362213439,-0.18271322391215744,-0.1874481548560999,-0.1921674222063478,-0.19686828044633017,-0.20154797274006347,-0.20620373230080993,-0.21083278376952835,-0.21543234460248623,-0.21999962646739632,-0.22453183664743573,-0.2290261794525004,-0.23347985763704418,-0.2378900738238455,-0.24225403193304323,-0.24656893861577714,-0.25083200469176614,-0.25504044659015485,-0.259191487792954,-0.26328236028040075,-0.2673103059775597,-0.27127257820148554,-0.27516644310826555,-0.2789891811392591,-0.2827380884658502,-0.28641047843202877,-0.2900036829941147,-0.2935150541569403,-0.2969419654058055,-0.30028181313352104,-0.30353201806185665,-0.30669002665671,-0.30975331253631605,-0.3127193778718168,-0.3155857547795137,-0.31835000670412694,-0.3210097297923893,-0.3235625542563043,-0.3260061457254023,-0.3283382065873307,-0.33055647731611915,-0.33265873778746524,-0.33464280858038864,-0.33650655226460824,-0.3382478746730005,-0.3398647261585048,-0.3413551028348432,-0.342717047800432,-0.34394865234486643,-0.34504805713736647,-0.34601345339657885,-0.3468430840411377,-0.3475352448203927,-0.34808828542472153,-0.3485006105748517,-0.3487706810896249,-0.3488970149316434,-0.34887818823025113,-0.3487128362813056,-0.3483996545232098,-0.34793739948868124,-0.3473248897317455,-0.34656100672945,-0.3456446957578064,-0.34457496674147753,-0.34335089507673916,-0.34197162242725226,-0.3404363574921987,-0.33874437674633967,-0.33689502515157055,-0.3348877168395558,-0.3327219357650412,-0.330397236329451,-0.32791324397439087,-0.32526965574469086,-0.3224662408206332,-0.3195028410190238,-0.3163793712627807,-0.31309582001872277,-0.30965224970325844,-0.3060487970556857,-0.30228567347883006,-0.2983631653467588,-0.29428163427932547,-0.290041517383314,-0.2856433274599615,-0.2810876531786576,-0.27637515921663164,-0.27150658636445324,-0.2664827515971829,-0.26130454811103354,-0.2559729453254092,-0.25048898885020365,-0.24485380041826563,-0.23906857778293786,-0.23313459458060787,-0.22705320015820826,-0.22082581936563672,-0.21445395231306155,-0.2079391740931158,-0.201283134467976,-0.1944875575213596,-0.18755424127546805,-0.18048505727294115,-0.17328195012388034,-0.1659469370180358,-0.15848210720225367,-0.15088962142329623,-0.14317171133617546,-0.13533067887813632,-0.12736889560846382,-0.11928880201427985,-0.11109290678253618,-0.10278378603839902,-0.09436408255026288,-0.08583650490161955,-0.07720382663005028,-0.06846888533359759,-0.059634581744811864,-0.050703878772768336,-0.04167980051336411,-0.0325654312282353,-0.023363914292624438,-0.014078451112570367,-0.004712300011778939,0.004731224911424453,0.014248754956673855,0.023836868023244178,0.033492089840420666,0.043210895226099756,0.05298970937317984,0.0628249091632584,0.07271282450716704,0.08264973971183788,0.09263189487299757,0.10265548729317281,0.11271667292446261,0.12281156783554614,0.13293624970235404,0.1430867593218485,0.1532591021483166,0.16344924985159925,0.17365314189663814,0.18386668714374002,0.19408576546891992,0.20430622940370152,0.21452390579371494,0.22473459747545055,0.23493408497049176,0.2451181281965573,0.25528246819467326,0.2654228288717711,0.27553491875802405,0.28561443277819853,0.2956570540363162,0.3056584556128885,0.3156143023740029,0.32552025279150865,0.33537196077356835,0.3451650775048069,0.3548952532953131,0.3645581394377163,0.3741493900715719,0.38366466405428123,0.3930996268377562,0.4024499523500528,0.41171132488117135,0.4208794409722392,0.42995001130726784,0.43891876260669077,0.4477814395218686,0.45653380652976333,0.4651716498269596,0.4736907792222343,0.4820870300268465,0.4903562649417448,0.4984943759408668,0.5064972861497166,0.5143609517184056,0.5220813636883329,0.5296545498516959,0.5370765766030047,0.5443435507817969,0.551451621505726,0.5583969819932232,0.5651758713749101,0.5717845764929669,0.5782194336876385,0.5844768305700877,0.5905532077807886,0.5964450607326687,0.6021489413382107,0.6076614597197231,0.6129792859020032,0.6180991514866129,0.6230178513069975,0.6277322450636832,0.6322392589387935,0.6365358871891333,0.6406191937170946,0.6444863136186443,0.6481344547076675,0.6515608990159376,0.6547630042680034,0.6577382053302829,0.6604840156336698,0.6629980285689604,0.6652779188544254,0.6673214438748549,0.6691264449914168,0.6706908488216815,0.6720126684891728,0.6730900048418181,0.6739210476386805,0.6745040767043688,0.6748374630505325,0.6749196699638578,0.6747492540600005,0.6743248663028945,0.6736452529888948,0.6727092566952257,0.6715158171922136,0.6700639723188047,0.6683528588208737,0.6663817131518538,0.6641498722352186,0.6616567741883781,0.6589019590075474,0.655885069213181,0.6526058504555596,0.6490641520801548,0.6452599276523893,0.6411932354414458,0.6368642388627824,0.6322732068790285,0.6274205143589612,0.6223066423942626,0.6169321785737958,0.6112978172151299,0.6054043595530861,0.5992527138850721,0.5928438956730073,0.5861790276016432,0.5792593395931152,0.5720861687775647,0.5646609594197068,0.5569852628012116,0.5490607370588124,0.5408891469780538,0.5324723637426098,0.52381236463914,0.5149112327176408,0.5057711564072956,0.4963944290878224,0.4867834486163561,0.4769407168098993,0.46686883888342134,0.456570522843669,0.4460485788388101,0.43530591846401057,0.42434555402309765,0.41317059774645853,0.4017842609653454,0.39018985324279226,0.3783907814613388,0.36639054886780803,0.35419275407536827,0.34180109002316345,0.32921934289377813,0.31645139098885755,0.303501203563185,0.2903728396175733,0.2770704466509077,0.2635982593717331,0.24996059836975812,0.2361618687477007,0.22220655871389505,0.20809923813609688,0.19384455705696443,0.17944724417167168,0.16491210526817018,0.15024402163058864,0.13544794840631963,0.12052891293731534,0.10549201305617455,0.09034241534757426,0.07508535337566036,0.05972612587798167,0.044270094926612824,0.028722684057081494,0.013089376365770367,-0.002624287423545865,-0.018412710923354347,-0.03427024407553434,-0.05019118517327707,-0.06616978291104776,-0.08220023846187678,-0.09827670758120577,-0.11439330273654967,-0.1305440952621757,-0.1467231175380299,-0.1629243651921031,-0.17914179932542101,-0.19536934875884246,-0.21160091230082823,-0.2278303610353278,-0.24405154062894974,-0.26025827365652004,-0.27644436194417643,-0.2926035889290951,-0.3087297220349785,-0.3248165150623712,-0.3408577105929155,-0.35684704240660736,-0.3727782379111497,-0.38864502058243655,-0.4044411124152469,-0.42016023638319283,-0.4357961189069567,-0.4513424923298777,-0.46679309739989105,-0.48214168575687,-0.49738202242437424,-0.5125078883048461,-0.5275130826772392,-0.5423914256961104,-0.5571367608911669,-0.5717429576662901,-0.5862039137970128,-0.6005135579254675,-0.6146658520517883,-0.628654794020979,-0.6424744200042202,-0.6561188069736243,-0.6695820751694275,-0.682858390558605,-0.6959419672839231,-0.7088270701023972,-0.721508016812173,-0.7339791806668162,-0.7462349927760258,-0.7582699444917548,-0.770078589778763,-0.7816555475685956,-0.7929955040960203,-0.8040932152169193,-0.8149435087066743,-0.825541286538066,-0.8358815271377186,-0.8459592876201394,-0.8557697059983822,-0.8653080033704001,-0.8745694860801367,-0.8835495478524336,-0.8922436719008142,-0.9006474330072382,-0.9087564995729077,-0.9165666356392372,-0.924073702878084,-0.9312736625503646,-0.9381625774321884,-0.9447366137076416,-0.9509920428273798,-0.956925243332185,-0.9625327026406629,-0.9678110188002651,-0.9727569022008375,-0.9773671772498993,-0.9816387840088796,-0.9855687797895484,-0.9891543407098923,-0.9923927632086974,-0.9952814655181205,-0.9978179890935405,-1.0],"y":[1.5354134554527516e-05,0.00015878975952183334,-0.00047027183398312857,-0.0004982120103792604,-0.0004042363470757357,5.3655164516211486e-05,-0.0007439985657847814,0.000573526027862082,-0.00038267218831398276,0.0005780048415169649,-0.0011547665804324035,-0.0006489619832147433,-0.0003815587054272918,-0.002159496328001114,-0.0003545316439819647,0.001929107509246929,0.00016690897321909582,-0.0012814498656611773,-0.0020206428446215073,-6.0298604241047366e-05,0.0007154619440744389,-0.0008116361276357668,-0.0012851877171446422,0.00028666006807753276,0.00016609775971451887,-0.0009009295008757579,8.52825318464109e-05,-6.30016228400447e-05,0.0005807270883075811,0.00012507190096131788,0.0010863232351196862,0.0002499999325263262,-0.0016367208909079441,-7.842721882766794e-05,0.0027968057664287628,0.00010801782989264429,-0.0001025825944457638,-0.0012988260439791314,0.0003551192977180671,-0.00027299671182252775,0.0009761934168791797,0.0008749630585875078,0.0004702902887716798,0.0018351869503818803,-0.0013434865189946416,-2.3700953993407278e-05,-0.00017680893289945523,0.0004687804993273222,0.00027482449251710865,0.0002821969413941132,-0.00033651207046049797,-0.00018639726521675593,0.0004019134610309984,-9.12026856046375e-05,0.0006149564946463598,-0.0012891164090420863,-0.00115732522331455,0.0007870050025573346,0.0005947289322396069,-0.0002791132549515414,-0.0004917715674414574,0.0001709861680288539,0.00011187304256417765,0.0010041258356156444,-0.0009943986895589905,0.002647953186521476,-0.0004951163159542263,0.00042823678126971014,-0.0006141642551141799,9.95615488896221e-05,-0.0015214296823595872,-0.0015969437338048341,0.001261929463071266,-0.0001129808860735291,-0.0013637180400697226,0.00034281950326215055,-0.0008135555874660586,-0.0015035157458220842,0.0006350369223195594,7.970572995351365e-05,0.001402993479413061,-0.0014770475185196404,0.0007937734153408264,0.0001401050451836456,0.000984874283066819,0.0009009084036380016,0.0011643490811163303,0.0014920022156912826,-0.0011976233220205325,0.0019350548116360033,0.00025282807651628384,-0.0009350820931852064,-0.002171851322059035,-1.4434934376762856e-05,-0.00173067237230562,0.0002812145707144564,-0.0014355814833801944,0.0015206335992854082,0.00024945709786488164,-0.0013811031670005736,0.0012836370610350702,-0.00036255881588488176,-0.0004353122842480221,0.0005189726332808998,-0.00045422838523247346,0.00021727343645485756,0.0009182762763076748,-0.002290164723036671,-0.0006588636584970934,0.0005747041517882314,0.00014870024784434618,0.000696913868250363,-0.00031602833102965176,0.00048410644488085285,0.0009998040773325848,0.00160473236100675,0.0003264443127170356,0.00013484154631928917,-0.0013682040996178938,0.00010727017717423827,0.00044384210032150713,0.0016681668229785714,0.00041551150176845423,0.000762488939382869,9.35363697904775e-05,0.0005166756135383887,0.00034164591748270023,0.00012757425778403005,0.001256346084966064,-0.0009178032205055636,0.0002631055679045391,-0.000347395182744111,0.0005051206071872257,-0.0007870187424451476,-0.0006553024244417999,-0.0017352152617468072,-0.000163908436934289,0.0014970943550170878,-0.0006859793476923782,-0.0009303846968186645,0.002424194743301574,-0.0004285261191429461,0.0008225766718155828,-0.0013587071547543309,0.0009346799664943774,-9.94264436658602e-05,0.0004315204433166905,0.0008941124491750093,0.00014894471173731118,-0.000729960038430136,-0.0005753005758712536,-6.233607349515704e-05,-0.001959362017501776,0.0008706856887484735,3.873870211856864e-05,-0.0008453414511188638,0.0015186847322937785,-0.001062903169281906,-0.0004746672812268249,0.00020129474478231823,0.0006222353561765432,-0.0010870139405670543,0.0005252658179896437,0.0012777314264366393,-0.00012113732160301065,-0.0011230627633121656,-4.535952032775422e-06,0.001062010143312035,0.0013655008415813432,-0.0009497584187605486,-0.000832305976354881,-0.0008317120026018109,-0.0013602596257359378,-0.000351035815673,-0.0004907085388870735,-0.0001914924487596055,-0.0019151378387787447,-8.66504713265942e-05,-0.0014691914186856277,0.00038153784298026094,6.713808268292976e-05,-0.0008693500600734761,-0.000580848183341078,-0.0002646389560286204,0.0016730929810613313,0.0007724381721921675,0.0010558558747680127,0.0009980288597005525,-0.00030273362810158346,-0.00012708299120853318,0.0006273188041687778,0.00010129813815185693,0.000738196467767619,-0.0004450083794152555,-0.00031857656611098594,-0.0005779874906929887,0.0011224875937045705,0.0010111495931761807,-0.0003070560571478081,-0.0010667502908003564,0.0010146198148371186,-0.00043043152901711077,0.0011189273853558265,-0.00016672390984564676,-0.0005230879276781004,0.00038312657710990426,0.0007327002255522749,0.0006115176963989235,0.0016743177395114274,0.0007605497446460501,0.0006801217790464219,-0.0003234630158102072,0.0012506231173721287,-0.00015873943982756152,0.0009281535587389863,0.001154019432752624,-0.0004062600067757081,-0.0003170651131628064,-0.0004954791367476405,0.001991628798129604,-0.0007474605620959613,9.02973233874863e-05,5.917384627665407e-05,0.0022246862042575853,-0.0009029133148555882,-0.0018172526122507303,0.0007513810641297973,0.0019061657436011852,0.0007481681362475207,0.00013916668043074872,-7.237984175190287e-05,-4.3263207770391246e-05,0.0013900618461362094,-0.0014539175208258535,0.0014063193968715504,-0.0005575539427713026,-0.0004040148385092203,-0.00012382707975663423,-0.0006508712998760468,-0.002452605155199968,2.708862914577023e-07,0.0012767314940100977,0.00170184374541055,-0.0004239837139172947,-0.0006886444280369606,-0.0011567708835674149,0.0011618067082039894,0.001058242746014616,0.0011819369721532288,-0.00013325826731066794,0.001143818254556258,-0.0012361678826926432,-0.0004620678323774468,0.0014365114137154355,-0.0011324753429171718,-0.0005408977874460255,-0.000601422839276599,-0.0007968613418942147,-0.0006049661968842211,0.00035618071386996124,0.00037110632616605684,-0.0011346957438222694,-0.0006632729108576801,0.00010853779007308779,0.00040750455040560563,-0.001305656562716192,-0.0001663506406284892,0.0007447458431409701,0.0015541566930084801,-0.0010625933529162601,-0.0011148088526678089,-0.0014239475467371665,-0.00050833624307869,0.0006388540107804685,-0.00015734465978887386,0.0003560234114235418,0.0015547930789130463,-0.00014289611336575477,0.0004980124929682034,-0.00042361365367854064,0.00010128404500544971,-0.00027549517356793455,-0.0008765523569563332,-0.00038766210484250576,0.0005913244428969997,-0.0007138517892993115,-0.0007590031919703544,0.0006637455275064901,-0.00018316562597063887,-0.0003136475611244851,-0.0012278201209784505,0.0006624811720024727,0.00019065024351107288,0.0002001099895637978,-0.0009581000425463968,-0.0012686600253639297,-0.0018281261649365512,-4.377675868987773e-05,0.00022419990854177216,0.0008713980821402535,0.0010560158844747875,-5.816913379343881e-05,-0.00045370914832216553,-0.0009013536935279327,8.58716365667043e-05,0.0005079022554670263,-0.0011680536192090884,-0.0004575087413904496,0.000551357308947677,0.000766677967747301,0.001537715965963145,-0.0014431906318685963,-0.0010607612243742927,0.00018745148763347637,0.00012944935184228465,0.0003477990661131045,-8.403895067866623e-05,0.0001967575007555827,-7.080808229049821e-06,0.000973890262487361,0.0014988783412627437,0.00044904980890115003,-0.0007447537037702086,-0.0006844118254527406,0.0001740963967373411,-0.0009281727677966504,-0.0011392028655698547,0.0002980072111614517,0.0010099000312103336,0.00033085958573634986,0.0002076051134633163,-0.0008606392817850336,-0.0008136950564738475,0.0005691078996981452,0.00014883689152196653,8.130664974376054e-05,8.510089061175704e-06,0.0012566982269519242,0.0010017605911719712,-0.000618154742413691,-0.000555628793401342,-0.0013397106055058898,-9.757845590874116e-05,0.0008037833912368218,0.001681318166367757,0.0021928095371341145,-0.00013294044847537664,-0.0012934366389942,-0.0008684662292228799,0.0013751221049878692,0.0004936601389413103,-0.00044231088488289885,0.0006838870146043098,0.0012282266640225622,0.00029620868392918917,-0.0014165126439276057,-0.0010262920592944444,0.0003288982563685869,1.237232993470602e-06,0.0005630180285033547,-0.0007801070348406671,0.0023392797483629806,-0.00022399691493266824,0.0014977840512915494,-0.0008654477526243318,-0.000328927035839957,-0.00041383977888088903,-3.840799929446393e-05,0.00047797299290646816,-7.745830598451377e-05,0.0018557959576994544,0.0012888479446598825,-0.000726383757064477,0.0015081105280253147,0.0007408499263045008,0.0007261799956649196,0.0010536408772644627,-0.0008981560270436672,-0.00046770785182877813,-0.0015141065341532528,0.002072465419972201,-0.0007737654520726916,-0.0006372632074284609,-0.0013464997493857517,-0.00013141522139311062,0.0006561942588607196,-0.0006973124919029926,0.0010812199801261085,0.0017814868780007057,0.0009620965067995532,0.0008230245837485401,0.0014956268885589475,3.8020972151053734e-05,0.0003706105281856133,0.00041329563223941424,0.000782677533193031,0.0006775707811445354,-0.00040360844734797286,-7.60695950461055e-05,-0.002182125441971642,-0.0020822147222807263,1.920806520054216e-05,-0.0006221393019885911,-4.22064645739944e-05,0.0003649346954092647,0.00040293787144536305,-0.0002083376993825387,-0.0011025554868224947,-0.0018520142179970765,-0.0008492450529232991,0.0008411693274810329,0.0012758838657370788,0.0009575828736362631,-0.00041459733673020264,0.0007855541094129898,0.0013050643661309078,0.0007513213535692915,0.0005864899019533357,0.0011379725350150285,-0.0015084033381897195,0.00047489942062665366,0.00296004538076256,0.001878705446794128,-0.0001058818511909452,-0.0012139245865534379,0.0005703171012832511,-0.0009514805688105725,-0.0006707446426126969,-0.0014017361307818567,-0.0013073281732389195,-0.0003420443971771958,-0.00018871502952577142,0.0012127079149075399,0.0013651996173210783,-0.0011497600081493875,0.0015846939205152483,-0.0007549820872232869,0.00011761662189578351,-0.001012891203894283,0.0016415922638805412,0.0023513320552084574,-0.0004050823039281786,-0.00093181357237098,7.918565823676829e-06,0.0017286866749726788,-0.0008441199992616349,0.0011948634419372264,0.0004730004730392421,-0.002160982974858775,0.0009167422141136261,-0.0017330144569299832,-9.070512954666325e-05,0.0004005986488355493,0.00163505863120896,0.0015056959826067907,-0.00043669770853967734,2.4965481679917295e-05,0.0007237683708849872,-0.0006906587414094021,0.0010225288912330828,0.0009307781045217241,-4.045778580175799e-05,0.00017227675750656018,0.0016362661095057514,-0.001257307272809494,-0.000624772353357781,0.0005846614925386634,-0.0013447726483035859,0.00017446998060294982,0.0008606680909662465,-0.0004655926806906886,0.0001288475181299647,-0.0005515329119394458,0.0004411050541906755,0.000896533443959146,-0.0006314963956052194,-0.001480351002244086,0.0018420040720273814,0.0004396534450017733,0.0004199192729192814,0.000720504925451608,0.0008013006663349087,-0.0007761421450288427,0.0009455049336780269,-0.003665874451452945,0.00023473894966078525,0.00018552315337021683,0.0008420618422633482,0.0004571166215855382,0.0003352090149656573,0.0005448966143696586,-0.0003386922158823647,0.0011395134868728615,-0.00019109074618121273,-0.00015011482287811238,0.00176321287944908,-0.0026333509210822153,-0.001999087020254609,-0.0003949664334382609,-0.00012468570121555546],"z":[0.0,3.784811152813291e-05,0.0001513654437064966,0.0003404710037654597,0.0006050298519103441,0.0009448531735294364,0.0013596983802371166,0.0018492692397040443,0.0024132160342126385,0.0030511357478624364,0.003762572282336267,0.004547016701124581,0.005403907502091753,0.006332630918254636,0.007332521246630246,0.008402861204996065,0.009542882316393128,0.010751765321188886,0.012028640616503593,0.013372588722791021,0.014782640777351242,0.016257779054540396,0.01779693751242964,0.01939900236565266,0.02106281268416884,0.022787161017656567,0.024570794045238906,0.02641241325023181,0.028310675619592933,0.03026419436773724,0.03227153968437396,0.03433123950600779,0.036441780310735854,0.03860160793596069,0.04080912841862852,0.04306270885759115,0.045360678297678834,0.04770132863506153,0.05008291554346495,0.052503659420798064,0.054961746355738764,0.05745532911381432,0.05998252814250414,0.0625414325948827,0.06513010137131156,0.06774656417868033,0.0703888226066881,0.07305485122064796,0.07574259867028932,0.0784499888140249,0.08117492185814094,0.08391527551036242,0.08666890614723731,0.08943364999477714,0.09220732432178426,0.09498772864528983,0.09777264594752019,0.1005598439038036,0.10334707612082308,0.10613208338461638,0.10891259491771826,0.11168632964483577,0.1144509974664426,0.11720430053967391,0.11994393456589941,0.12266759008434842,0.12537295377115718,0.1280577097432055,0.1307195408661068,0.13335613006571365,0.1359651616424967,0.13854432258815572,0.14109130390381683,0.14360380191917055,0.14607951961190266,0.14851616792677066,0.15091146709367603,0.15326314794408383,0.15556895322514033,0.15782663891083995,0.16003397550959325,0.16218874936754865,0.16428876396702174,0.16633184121938757,0.16831582275179302,0.17023857118704835,0.1720979714160593,0.17389193186216445,0.1756183857367443,0.177275292285473,0.17886063802458593,0.1803724379665417,0.18180873683445942,0.1831676102647181,0.18444716599710861,0.18564554505193426,0.1867609228934604,0.18779151057912077,0.18873555589389115,0.18959134446925027,0.19035720088615168,0.19103148976143816,0.19161261681713654,0.19209902993207853,0.19248922017529999,0.19278172282067849,0.19297511834227793,0.19306803338987646,0.19305914174416108,0.19294716525108443,0.19273087473488398,0.1924090908892757,0.1919806851463428,0.19144458052264948,0.19079975244212002,0.19004522953523276,0.18918009441408914,0.18820348442292922,0.1871145923636738,0.18591266719608623,0.18459701471215664,0.18316699818432308,0.18162203898715543,0.17996161719214013,0.1781852721352137,0.17629260295670793,0.1742832691133786,0.17215699086220485,0.16991354971565611,0.16755278886813857,0.1650746135933434,0.1624789916122347,0.1597659534314254,0.15693559265170445,0.15398806624649142,0.1509235948100073,0.14774246277496542,0.14444501859959766,0.1410316749238485,0.13750290869457873,0.13385926125963873,0.1301013384306826,0.12622981051461002,0.12224541231353579,0.1181489430932021,0.11394126651976258,0.1096233105648813,0.10519606737910478,0.10066059313347905,0.09601800782939857,0.09126949507668859,0.0864163018399357,0.08145973815309894,0.07640117680244411,0.07124205297786222,0.06598386389264581,0.060628168371811716,0.055176586409073504,0.04963079869258124,0.04399254609956097,0.038263629160000326,0.032445907489541626,0.026541299191757777,0.02055178023000087,0.014479383769027604,0.008326199486619053,0.0020943728554292515,-0.004213895604693819,-0.010596351103652231,-0.017050685387033714,-0.023574537570750648,-0.030165495004080643,-0.036821094160793516,-0.04353882155803579,-0.05031611470263071,-0.057150363064438374,-0.06403890907640786,-0.07097904916093967,-0.07796803478216474,-0.0850030735237338,-0.0920813301916958,-0.09919992794203701,-0.10635594943243468,-0.11354643799777067,-0.12076839884893746,-0.12801880029445742,-0.13529457498442485,-0.14259262117626942,-0.14990980402182763,-0.1572429568751995,-0.16458888262085578,-0.1719443550214511,-0.1793061200847888,-0.18667089744937265,-0.19403538178796956,-0.201396244228602,-0.20875013379237486,-0.21609367884753503,-0.22342348857915326,-0.23073615447380813,-0.23802825181864476,-0.24529634121417263,-0.25253697010015824,-0.25974667429396303,-0.26692197954066654,-0.27405940307431165,-0.28115545518959845,-0.28820664082334974,-0.2952094611450641,-0.3021604151558643,-0.309056001295149,-0.31589271905424426,-0.3226670705963504,-0.3293755623820727,-0.3360147067998246,-0.3425810238003794,-0.3490710425348526,-0.3554813029953886,-0.3618083576578191,-0.36804877312556794,-0.37419913177406067,-0.3802560333949105,-0.38621609683913477,-0.3920759616586697,-0.39783228974543505,-0.40348176696721455,-0.4090211047996025,-0.4144470419532807,-0.4197563459958765,-0.4249458149676668,-0.4300122789903804,-0.4349526018683621,-0.4397636826813595,-0.44444245736819193,-0.44898590030057156,-0.453391025846338,-0.45765488992138115,-0.46177459152952105,-0.46574727428962404,-0.4695701279492317,-0.4732403898839897,-0.4767553465821603,-0.4801123351135151,-0.48330874458190226,-0.486342017560792,-0.48920965151110857,-0.49190920018066214,-0.4944382749845006,-0.4967945463655087,-0.49897574513458565,-0.5009796637897447,-0.5028041578134785,-0.5044471469477497,-0.5059066164459656,-0.5071806183013126,-0.5082672724508277,-0.5091647679545966,-0.5098713641494768,-0.5103853917767525,-0.5107052540831389,-0.5108294278945618,-0.5107564646621507,-0.5104849914798925,-0.5100137120734036,-0.5093414077592904,-0.508466938374579,-0.5073892431757042,-0.5061073417065647,-0.5046203346351561,-0.5029274045583145,-0.501027816774105,-0.49892092002141475,-0.4966061471863101,-0.49408301597474125,-0.4913511295511858,-0.4884101771428333,-0.4852599346089366,-0.48190026497495664,-0.47833111893115454,-0.47455253529528624,-0.4705646414390825,-0.4663676536781982,-0.46196187762534374,-0.45734770850631157,-0.4525256314386408,-0.447496221672664,-0.44226014479470815,-0.43681815689222914,-0.43117110468067477,-0.4253199255918958,-0.4192656478239266,-0.413009390351989,-0.4065523629005708,-0.39989586587646786,-0.39304129026267126,-0.3859901174730229,-0.37874391916755196,-0.3713043570284507,-0.36367318249663394,-0.3558522364688741,-0.34784344895549,-0.339648838698612,-0.331270512751044,-0.32271066601576337,-0.31397158074612874,-0.30505562600685954,-0.295965257095897,-0.28670301492724065,-0.2772715253749056,-0.26767349857812855,-0.2579117282079994,-0.24798909069568287,-0.237908544422439,-0.22767312887164015,-0.21728596374302522,-0.20675024802943148,-0.19606925905625996,-0.1852463514839664,-0.1742849562738553,-0.16318857961750585,-0.15196080183013888,-0.1406052762082864,-0.12912572785210488,-0.11752595245272601,-0.1058098150450173,-0.0939812487261783,-0.08204425334057609,-0.07000289413127629,-0.057861300358704924,-0.04562366388692356,-0.03329423773799537,-0.020877334614934105,-0.008377325393763103,0.004201362414806627,0.016854246233519235,0.029576790016001258,0.04236440587288497,0.05521245572606407,0.06811625299046602,0.08107106428275074,0.09407211115629364,0.10711457186183677,0.12019358313314074,0.13330424199699573,0.146441607606904,0.15960070309975571,0.172776517474808,0.18596400749424505,0.19915809960461975,0.21235369187842826,0.22554565597509738,0.23872883912061563,0.2518980661050673,0.26504814129728127,0.2781738506758342,0.29126996387560217,0.3043312362490816,0.3173524109416602,0.3303282209800305,0.3432533913729305,0.35612264122336884,0.3689306858515164,0.3816722389274035,0.3943420146125913,0.4069347297099454,0.4194451058206669,0.43186787150769773,0.4441977644646449,0.4564295336893308,0.46855794166110554,0.48057776652101736,0.4924838042539716,0.5042708708719699,0.515933804597541,0.52746746804647,0.5388667504089121,0.5501265696280054,0.5612418745750619,0.5722076472204471,0.5830189047992278,0.5936707019706957,0.604158132970845,0.6144763337569142,0.62462048414307,0.634585809926342,0.6443675850018965,0.6539611334667492,0.6633618317110236,0.6725651104958464,0.6815664570169988,0.690361416953421,0.698945596499694,0.7073146643816032,0.7154643538539173,0.723390464679498,0.7310888650888796,0.7385554937194474,0.7457863615333648,0.75277755371339,0.7595252315357451,0.7660256342191929,0.7722750807494932,0.7782699716784179,0.7840067908965056,0.7894821073787519,0.794692576902436,0.7996349437362962,0.8043060423002714,0.8087027987950441,0.8128222328006183,0.8166614588431902,0.8202176879295672,0.8234882290484109,0.826470490637587,0.8291619820169178,0.8315603147856442,0.8336632041839185,0.8354684704176594,0.8369740399461153,0.8381779467314947,0.8390783334500352,0.8396734526638984,0.8399616679532906,0.8399414550082231,0.8396114026793435,0.8389702139872789,0.8380167070899542,0.8367498162073584,0.8351685925032488,0.8332722049233011,0.83105994098923,0.8285312075484125,0.8256855314785789,0.8225225603471372,0.8190420630247265,0.8152439302525978,0.8111281751634578,0.8066949337554099,0.8019444653186569,0.7968771528146387,0.7914935032073089,0.7857941477462587,0.7797798422014244,0.7734514670491331,0.7668100276092492,0.7598566541332227,0.7525926018428415,0.7450192509195207,0.7371381064439682,0.7289507982861062,0.7204590809451265,0.7116648333395935,0.7025700585475083,0.6931768834962986,0.6834875586026857,0.6735044573624264,0.6632300758899192,0.6526670324077242,0.6418180666860241,0.6306860394321022,0.619273931629926,0.6075848438299305,0.5956219953891476,0.5833887236618137,0.570888483140637,0.5581248445488904,0.5451014938835668,0.5318222314098011,0.5182909706068275,0.5045117370657133,0.4904886673391904,0.47622600774386786,0.46172811311516343,0.44699944551530807,0.43204457289476916,0.41686816770750923,0.4014750054804635,0.3858699633376792,0.3700580184795391,0.35404424661756306,0.33783382036524656,0.3214320075854572,0.3048441696948853,0.2880757599261184,0.2711323215478742,0.2540194860439763,0.23674297125167365,0.21930857945989102,0.2017221954680734,0.1839897846062432,0.16611739071695508,0.14811113409980128,0.12997720941919955,0.11172188357614944,0.09335149354470838,0.07487244417390557,0.056291205955890246,0.03761431276106395,0.018848359541010145,3.6739403974420594e-16],"type":"scatter3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"plot_bgcolor":"rgba(0,0,0,0)","width":450,"height":355,"scene":{"xaxis":{"title":{"text":"x"}},"yaxis":{"title":{"text":"y"}},"zaxis":{"title":{"text":"z"}},"camera":{"eye":{"x":2.5,"y":0.0,"z":0.0}}}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('e23c6ee1-422c-4da4-a980-f68c2e965272');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<div style="margin-top: -18em;">
+
+</div>
+<div class="mybox">
+<div class="mybox-header-bis">
+<p>Shape model</p>
+</div>
+<div class="mybox-body">
+<ul>
+<li>Shape analysis</li>
+<li>Model-order reduction on shapes
+<ul>
+<li>Parametrisation of the shape</li>
+<li><span class="math inline">\(\Omega = \Omega\left(\textcolor{LGreenLMS}{\left\{\mu_i\right\}_{i \in \mathopen{~[\!\![~}1, \beta  \mathclose{~]\!\!]}}}\right)\)</span>
+<ul>
+<li>SVD</li>
+<li>k-PCA</li>
+<li>Auto-encoder</li>
+</ul></li>
+<li>Personalising the digital twin</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="Template/E4H_ENSTA.svg" class="slide-logo"></p>
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': true,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+    (function() {
+      let previousOnload = window.onload;
+      window.onload = () => {
+        if (previousOnload) {
+          previousOnload();
+        }
+        lightboxQuarto.on('slide_before_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          const href = trigger.getAttribute('href');
+          if (href !== null) {
+            const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+            if (imgEl !== null) {
+              const srcAttr = imgEl.getAttribute("src");
+              if (srcAttr && srcAttr.startsWith("data:")) {
+                slideConfig.href = srcAttr;
+              }
+            }
+          } 
+        });
+      
+        lightboxQuarto.on('slide_after_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(slideNode);
+          }
+        });
+      
+      };
+      
+    })();
+              </script>
+    
+
+</body></html>
