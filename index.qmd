@@ -278,7 +278,7 @@ Reduced-order model (ROM)
 
 * Build a **surrogate model**
   * Parametrised solution $\vect{u}\left(\textcolor{Blue}{\vect{x}}, \textcolor{LGreen}{\para}\right)$
-  * In modern terms, we want to learn a **displacement field operator** $\textcolor{LGreen}{\para} \mapsto \vect{u}\left(\textcolor{Blue}{\cdot}, \textcolor{LGreen}{\para}\right)$
+  * In modern terms, we want to learn a **displacement field operator** $\textcolor{LGreen}{\para} \mapsto \vect{u}_{\theta^{\star}}\left(\textcolor{Blue}{\cdot}, \textcolor{LGreen}{\para}\right)$
 * No computations online
 * **On the fly** evaluation of the model
   * Real-time parameters estimation
@@ -754,7 +754,7 @@ $$
 ::: {.fragment .fade-up}
 * Finding the tensor decomposition by **minimising** the **energy**
 $$
-        \left(\left\{\overline{\vect{u}}_i \right\}_{i\in \llbracket 1,m\rrbracket},\left\{\lambda_i^j \right\}_{
+        \boldsymbol{\theta^{\star}} = \left(\left\{\overline{\vect{u}}_i \right\}_{i\in \llbracket 1,m\rrbracket},\left\{\lambda_i^j \right\}_{
           \begin{cases}
               i\in \llbracket 1,m\rrbracket \\
               j\in \llbracket 1,\beta \rrbracket
@@ -782,17 +782,17 @@ $$
 ::: {.fragment fragment-index=2 .fade-out}
 ::: {data-id="1" }
 $$
-\vect{u}_{\theta}\left(\vect{x}, \para\right) =  \overline{\vect{u}}(\vect{x}) ~\prod_{j=1}^{\beta}\lambda^j(\mu^j) $$
+\vect{u}_{\theta^{\star}}\left(\vect{x}, \para\right) =  \overline{\vect{u}}(\vect{x}) ~\prod_{j=1}^{\beta}\lambda^j(\mu^j) $$
 :::
 :::
 ::: {.fragment fragment-index=2 .fade-in-then-out}
 $$
-\vect{u}_{\theta}\left(\vect{x}, \para\right) = \textcolor{red}{\sum\limits_{i=1}^{2}} \overline{\vect{u}}_{\textcolor{red}{i}}(\vect{x}) ~\prod_{j=1}^{\beta}\lambda_{\textcolor{red}{i}}^j(\mu^j) $$
+\vect{u}_{\theta^{\star}}\left(\vect{x}, \para\right) = \textcolor{red}{\sum\limits_{i=1}^{2}} \overline{\vect{u}}_{\textcolor{red}{i}}(\vect{x}) ~\prod_{j=1}^{\beta}\lambda_{\textcolor{red}{i}}^j(\mu^j) $$
 :::
 ::: {.fragment fragment-index=3 .fade-in}
 ::: {data-id="2" }
 $$
-\vect{u}_{\theta}\left(\vect{x}, \para\right) = \sum\limits_{i=1}^{\textcolor{red}{m}} \overline{\vect{u}}_i(\vect{x}) ~\prod_{j=1}^{\beta}\lambda_i^j(\mu^j) $$
+\vect{u}_{\theta^{\star}}\left(\vect{x}, \para\right) = \sum\limits_{i=1}^{\textcolor{red}{m}} \overline{\vect{u}}_i(\vect{x}) ~\prod_{j=1}^{\beta}\lambda_i^j(\mu^j) $$
 :::
 :::
 :::
@@ -880,7 +880,7 @@ Graphical implementation of Neural Network PGD
 
 ::: {.r-stack}
 ::: {data-id="2" }
-$$            \vect{u}_{\theta}\left(\textcolor{Blue}{\vect{x}}, \textcolor{LGreen}{\para}\right) = \sum\limits_{i=1}^m \textcolor{Blue}{\overline{\vect{u}}_i(\vect{x})} ~\textcolor{LGreen}{\prod_{j=1}^{\beta}\lambda_i^j(\mu^j)} $$
+$$            \vect{u}_{\theta^{\star}}\left(\textcolor{Blue}{\vect{x}}, \textcolor{LGreen}{\para}\right) = \sum\limits_{i=1}^m \textcolor{Blue}{\overline{\vect{u}}_i(\vect{x})} ~\textcolor{LGreen}{\prod_{j=1}^{\beta}\lambda_i^j(\mu^j)} $$
 :::
 :::
 
@@ -1040,7 +1040,7 @@ Level $\ell \rightarrow \ell+1$
 
 ::: {.mybox-body}
 * **Interpretable** weights $=$ nodal values
-  * Direct initialisation of the new $\textcolor{Blue}{\boldsymbol{\theta}}$
+  * Direct initialisation of the new $\textcolor{Blue}{\boldsymbol{\theta^{\start}}}$
 $$\overline{\vect{u}}_{i,k}^{(\ell+1)} = \sum\limits_{p} N_p^{(\ell)}\left(\vect{x}_k^{(\ell+1)}\right) \overline{\vect{u}}_{i,p}^{(\ell)}$$
   * $\textcolor{LGreen}{\lambda_i^j}$ kept as is
 * **Coarse** (cheap) training, then **fine tuning** of all modes
